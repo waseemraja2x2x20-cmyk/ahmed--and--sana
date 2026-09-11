@@ -52,6 +52,11 @@ The hand-pose reference sheet is available at
 It covers relaxed, face-support, pointing, waving, and holding-object poses
 for reusable hand swaps and gesture preparation.
 
+The eye and eyebrow reference sheet is available at
+[`assets/eyes/eye-eyebrow-reference-sheet.jpg`](assets/eyes/eye-eyebrow-reference-sheet.jpg).
+It covers open, half-closed/blink, fully closed, neutral, angry, surprised,
+sad, worried, and confident states for Character Animator preparation.
+
 The Photoshop boy-puppet layer builder is available at
 [`scripts/photoshop/build-boy-puppet.jsx`](scripts/photoshop/build-boy-puppet.jsx).
 Run it in Photoshop with **File > Scripts > Browse**, then place the supplied
