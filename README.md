@@ -12,6 +12,7 @@ characters/   Layered Photoshop character source files and documentation
 puppets/      Production Adobe Character Animator puppet workspaces
 expressions/  Character-specific expression assets
 references/   Character sheets and visual references
+CHARACTER-SPEC.md  Ahmed and Sana visual consistency rules
 scenes/       Scene assets grouped by location
 audio/        Voice, music, and sound-effect source files
 exports/      Rendered deliverables (not tracked by default)
