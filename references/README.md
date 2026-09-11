@@ -1,6 +1,8 @@
 # Character References
 
 This directory contains the canonical visual references for Ahmed and Sana.
+See [`REFERENCE-ASSET-NOTICE.md`](REFERENCE-ASSET-NOTICE.md) for the runtime
+and production-asset separation policy.
 
 ## Files
 
