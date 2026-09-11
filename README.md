@@ -47,6 +47,11 @@ The reusable mouth reference grid is available at
 It covers Neutral, Ah, D, Ee, F, L, M, Oh, R, S, Uh, and W-Oo mouth shapes for
 lip-sync preparation.
 
+The hand-pose reference sheet is available at
+[`assets/hands/hand-reference-sheet.jpg`](assets/hands/hand-reference-sheet.jpg).
+It covers relaxed, face-support, pointing, waving, and holding-object poses
+for reusable hand swaps and gesture preparation.
+
 The Photoshop boy-puppet layer builder is available at
 [`scripts/photoshop/build-boy-puppet.jsx`](scripts/photoshop/build-boy-puppet.jsx).
 Run it in Photoshop with **File > Scripts > Browse**, then place the supplied
