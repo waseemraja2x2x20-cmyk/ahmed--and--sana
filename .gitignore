@@ -1,0 +1,23 @@
+# Adobe and operating-system metadata
+.DS_Store
+Thumbs.db
+*.tmp
+*.autosave
+
+# Animation and design application cache files
+*.bak
+*.cache
+~$*
+
+# Large source and generated media
+*.psd
+*.psb
+*.wav
+*.mp3
+*.mp4
+*.mov
+*.avi
+
+# Keep the project structure while leaving generated deliverables local.
+exports/*
+!exports/.gitkeep
