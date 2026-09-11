@@ -36,3 +36,8 @@ directory documentation for the expected contents and naming conventions.
 See [`docs/PROJECT-OVERVIEW.md`](docs/PROJECT-OVERVIEW.md) for the complete
 production workflow, naming conventions, puppet requirements, scene layout,
 audio conventions, and quality-control checklist.
+
+The repository structure is scaffolded for the full production tree. Editable
+PSD/AI files, approved individual reference crops, and rendered puppet
+previews must be supplied by the art workflow; placeholder files are not
+created for binary assets that do not yet exist.
