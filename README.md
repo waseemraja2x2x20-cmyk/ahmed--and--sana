@@ -42,6 +42,11 @@ PSD/AI files, approved individual reference crops, and rendered puppet
 previews must be supplied by the art workflow; placeholder files are not
 created for binary assets that do not yet exist.
 
+The reusable mouth reference grid is available at
+[`assets/mouths/lip-sync-viseme-grid.jpg`](assets/mouths/lip-sync-viseme-grid.jpg).
+It covers Neutral, Ah, D, Ee, F, L, M, Oh, R, S, Uh, and W-Oo mouth shapes for
+lip-sync preparation.
+
 The Photoshop boy-puppet layer builder is available at
 [`scripts/photoshop/build-boy-puppet.jsx`](scripts/photoshop/build-boy-puppet.jsx).
 Run it in Photoshop with **File > Scripts > Browse**, then place the supplied
