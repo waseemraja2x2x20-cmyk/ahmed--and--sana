@@ -52,9 +52,10 @@ lip-sync preparation.
 
 The individual mouth assets currently include [`assets/mouths/Ah.png`](assets/mouths/Ah.png)
 (open-wide Ah), [`assets/mouths/D.png`](assets/mouths/D.png) (teeth showing),
-and [`assets/mouths/Ee.png`](assets/mouths/Ee.png) (stretched smile). Add the
-remaining production visemes alongside them after they are drawn and approved
-against the canonical character artwork.
+[`assets/mouths/Ee.png`](assets/mouths/Ee.png) (stretched smile), and
+[`assets/mouths/F.png`](assets/mouths/F.png) (bottom lip under top teeth). Add
+the remaining production visemes alongside them after they are drawn and
+approved against the canonical character artwork.
 
 The hand-pose reference sheet is available at
 [`assets/hands/hand-reference-sheet.jpg`](assets/hands/hand-reference-sheet.jpg).
