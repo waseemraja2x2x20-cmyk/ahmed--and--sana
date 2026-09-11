@@ -32,3 +32,7 @@ exports/      Rendered deliverables (not tracked by default)
 Large binary assets such as `.psd`, audio, and rendered video files are
 intentionally excluded from version control. See the character and reference
 directory documentation for the expected contents and naming conventions.
+
+See [`docs/PROJECT-OVERVIEW.md`](docs/PROJECT-OVERVIEW.md) for the complete
+production workflow, naming conventions, puppet requirements, scene layout,
+audio conventions, and quality-control checklist.
