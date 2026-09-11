@@ -1,0 +1,224 @@
+{
+  "project": {
+    "name": "Ahmed & Sana Animation",
+    "id": "ahmed-sana-animation",
+    "version": "1.0.0",
+    "type": "2d-character-animation",
+    "status": "in-development"
+  },
+  "visual_reference": {
+    "canonical": true,
+    "purpose": "visual-reference-only",
+    "runtime_dependency": false,
+    "animation_dependency": false,
+    "runtime_behavior_change": false,
+    "animation_behavior_change": false,
+    "code_change": false,
+    "build_change": false,
+    "description": "The provided Ahmed and Sana character artwork is the authoritative visual reference for all animation and asset creation.",
+    "preserve_design": true,
+    "used_for": [
+      "visual-consistency",
+      "character-design-reference",
+      "future-asset-creation",
+      "future-puppet-preparation"
+    ],
+    "allowed_changes": [
+      "rigging",
+      "layer_separation",
+      "hidden_area_reconstruction",
+      "animation_pose",
+      "facial_expression",
+      "mouth_shapes",
+      "eye_states",
+      "hand_positions",
+      "limb_positions"
+    ],
+    "prohibited_unless_requested": [
+      "character_redesign",
+      "major_proportion_change",
+      "clothing_redesign",
+      "hair_redesign",
+      "face_redesign",
+      "style_change"
+    ]
+  },
+  "characters": {
+    "ahmed": {
+      "id": "ahmed",
+      "display_name": "Ahmed",
+      "source": {
+        "psd": "characters/boy/BOY.psd",
+        "ai": "characters/boy/BOY.ai",
+        "preview": "characters/boy/BOY.png"
+      },
+      "reference": "references/ahmed-reference.png",
+      "puppet": {
+        "psd": "puppets/Ahmed/Ahmed.psd",
+        "preview": "puppets/Ahmed/Ahmed.png"
+      },
+      "role": "male-character"
+    },
+    "sana": {
+      "id": "sana",
+      "display_name": "Sana",
+      "source": {
+        "psd": "characters/girl/GIRL.psd",
+        "ai": "characters/girl/GIRL.ai",
+        "preview": "characters/girl/GIRL.png"
+      },
+      "reference": "references/sana-reference.png",
+      "puppet": {
+        "psd": "puppets/Sana/Sana.psd",
+        "preview": "puppets/Sana/Sana.png"
+      },
+      "role": "female-character"
+    }
+  },
+  "puppet_system": {
+    "software": "Adobe Character Animator",
+    "source_software": "Adobe Photoshop",
+    "required_parts": [
+      "head",
+      "body",
+      "hair",
+      "eyes",
+      "eyebrows",
+      "mouth",
+      "left_arm",
+      "right_arm",
+      "left_hand",
+      "right_hand",
+      "left_leg",
+      "right_leg",
+      "feet"
+    ],
+    "rigging_features": {
+      "face_tracking": true,
+      "lip_sync": true,
+      "eye_blinking": true,
+      "head_turning": true,
+      "arm_animation": true,
+      "hand_animation": true,
+      "leg_animation": true,
+      "walking": true
+    }
+  },
+  "assets": {
+    "mouths": {
+      "path": "assets/mouths/",
+      "states": [
+        "neutral",
+        "A",
+        "E",
+        "I",
+        "O",
+        "U",
+        "smile",
+        "open",
+        "wide",
+        "surprised",
+        "sad"
+      ]
+    },
+    "eyes": {
+      "path": "assets/eyes/",
+      "states": [
+        "open",
+        "blink",
+        "closed",
+        "happy",
+        "surprised"
+      ]
+    },
+    "eyebrows": {
+      "path": "assets/eyebrows/",
+      "states": [
+        "neutral",
+        "raised",
+        "lowered",
+        "angry",
+        "sad",
+        "surprised"
+      ]
+    },
+    "hands": {
+      "path": "assets/hands/",
+      "states": [
+        "open",
+        "fist",
+        "pointing",
+        "waving"
+      ]
+    }
+  },
+  "animation": {
+    "expressions": [
+      "neutral",
+      "happy",
+      "sad",
+      "angry",
+      "surprised",
+      "confused"
+    ],
+    "gestures": [
+      "waving",
+      "pointing",
+      "talking",
+      "thinking",
+      "shrugging",
+      "laughing"
+    ],
+    "walk_cycles": {
+      "enabled": true,
+      "characters": [
+        "ahmed",
+        "sana"
+      ],
+      "phases": [
+        "contact",
+        "down",
+        "passing",
+        "up"
+      ]
+    }
+  },
+  "scenes": {
+    "path": "animation/scenes/",
+    "format": "scene-NN",
+    "current_scenes": [
+      "scene-01",
+      "scene-02",
+      "scene-03"
+    ]
+  },
+  "audio": {
+    "dialogue_path": "audio/dialogue/",
+    "music_path": "audio/music/",
+    "sfx_path": "audio/sfx/",
+    "dialogue_naming": "sceneNN_character_NNN.wav"
+  },
+  "scripts": {
+    "path": "scripts/",
+    "format": "scene-NN.md"
+  },
+  "exports": {
+    "preview": "exports/previews/",
+    "final": "exports/final/"
+  },
+  "quality_control": {
+    "canonical_reference_check": true,
+    "proportion_check": true,
+    "layer_check": true,
+    "mouth_check": true,
+    "eye_check": true,
+    "rig_check": true,
+    "lip_sync_check": true,
+    "walking_check": true
+  },
+  "versioning": {
+    "system": "semver",
+    "format": "MAJOR.MINOR.PATCH",
+    "canonical_artwork_immutable": true
+  }
+}
