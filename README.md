@@ -46,3 +46,7 @@ The Photoshop boy-puppet layer builder is available at
 [`scripts/photoshop/build-boy-puppet.jsx`](scripts/photoshop/build-boy-puppet.jsx).
 Run it in Photoshop with **File > Scripts > Browse**, then place the supplied
 artwork into the generated groups and save the result as `BOY.psd`.
+
+The matching Sana/Girl builder is available at
+[`scripts/photoshop/build-girl-puppet.jsx`](scripts/photoshop/build-girl-puppet.jsx).
+Use it the same way and save the generated document as `GIRL.psd`.
