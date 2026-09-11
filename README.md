@@ -50,9 +50,10 @@ The reusable mouth reference grid is available at
 It covers Neutral, Ah, D, Ee, F, L, M, Oh, R, S, Uh, and W-Oo mouth shapes for
 lip-sync preparation.
 
-The first individual mouth asset is [`assets/mouths/Ah.png`](assets/mouths/Ah.png),
-an open-wide Ah viseme. Add the remaining production visemes alongside it after
-they are drawn and approved against the canonical character artwork.
+The individual mouth assets currently include [`assets/mouths/Ah.png`](assets/mouths/Ah.png)
+(open-wide Ah) and [`assets/mouths/D.png`](assets/mouths/D.png) (teeth showing).
+Add the remaining production visemes alongside them after they are drawn and
+approved against the canonical character artwork.
 
 The hand-pose reference sheet is available at
 [`assets/hands/hand-reference-sheet.jpg`](assets/hands/hand-reference-sheet.jpg).
