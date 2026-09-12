@@ -1,5 +1,5 @@
 # AHMED — LAYER SLICING SPECIFICATION
-## 54-Layer Anatomical Hierarchy & Mesh Origin Map
+## 60-Layer Anatomical Hierarchy & Mesh Origin Map
 
 **Source Artwork:** Ahmed v1.1 Character Model Sheet (Premium 2D cel animation)  
 **Output File:** `/puppets/Ahmed/Ahmed.psd` (Layered PSD, 2000 × 3000 px, 8-bit RGB, transparent background)  
@@ -20,7 +20,17 @@
 
 ---
 
-## 54-LAYER HIERARCHY (Complete Anatomical Breakdown)
+## 60-LAYER HIERARCHY (Complete Anatomical Breakdown)
+
+**Counting convention:** The production target is 60 layers: 17 in `01_HEAD_RIG`, 9 in `02_TORSO_RIG`, 22 in `03_ARMS_RIG`, and 12 in `04_LEGS_RIG`. Eye, mouth, and hand-swap rows are nested implementation layers represented by their parent group/container and are included within those section totals; do not add them a second time. The root `+Ahmed`, locked `_Reference_CanvasArt`, and optional non-PSD deformers are excluded from the 60-layer PSD target.
+
+| Top-level rig | Count |
+|--------------|------:|
+| `01_HEAD_RIG` | 17 |
+| `02_TORSO_RIG` | 9 |
+| `03_ARMS_RIG` | 22 |
+| `04_LEGS_RIG` | 12 |
+| **Production total** | **60** |
 
 ### MASTER STRUCTURE
 ```
@@ -61,7 +71,7 @@
 | `+Right_Eye_Group` | Complete right eye unit | Independent | Eye center (pupil) | Mirror-duplicate hierarchy of Left_Eye_Group |
 | `+Mouth_LipSync_Master` | Mouth swap control group (13 visemes + triggers) | Independent | Mouth center (lip line) | See Mouth Subsystem below |
 
-#### Left Eye Subsystem (5 Layers)
+#### Left Eye Subsystem (5 nested implementation layers; included in the 17-layer head total)
 
 | Layer Name | Description | Swap Type | Trigger Key | Notes |
 |-----------|-------------|-----------|------------|-------|
@@ -73,11 +83,11 @@
 
 **Pupil Tracking:** Left_Pupil contains `Pupil_Range` sub-layer (invisible guide) limiting eye movement to 20° in all directions (prevents unnatural eye bug-out)
 
-#### Right Eye Subsystem (5 Layers)
+#### Right Eye Subsystem (5 nested implementation layers; included in the 17-layer head total)
 
 Mirror-duplicate of Left_Eye_Group with identical naming convention (_L replaced with _R)
 
-#### Mouth Lip-Sync Subsystem (9 Layers)
+#### Mouth Lip-Sync Subsystem (9 nested implementation rows; included in the 17-layer head total)
 
 **Master Group:** `+Mouth_LipSync_Master`
 
@@ -243,19 +253,19 @@ Using Pen Tool (P):
    - Add 15% overlap caps at attachment points
    - Tag with physics: `dangle:0.8–1.2`
 
-### Step 4: Slice Facial Structure (6 Layers)
+### Step 4: Slice Facial Structure (6 counted head groups; nested eye/mouth layers are included, not added)
 1. **Neck:** Outline base column connecting head to torso (light skin tone)
 2. **Jaw_Ears_Base:** Outline jaw outline + ear shapes (fair skin #D4A574)
 3. **+Nose:** Small stylized nose (fine detail, independent layer)
 4. **+Left_Eye_Group:** Outline entire left eye area (white + brown iris + shadow)
    - Subdivide into sub-layers: +Left_Eyebrow, Left_Eyelid, +Left_Pupil, Left_Eyeball_White
 5. **+Right_Eye_Group:** Mirror duplicate of left eye
-6. **+Mouth_LipSync_Master:** Create 13 mouth swap shapes (see Viseme table above)
+6. **+Mouth_LipSync_Master:** Create the 12 mouth swap shapes listed in the Viseme table above; these are nested inside the counted mouth group
    - Layer naming: `Mouth_Rest`, `Mouth_Ah`, `Mouth_Ee`, etc.
    - All layers share same X/Y position (mouth anchor point)
    - Set layer opacity: 0% (all invisible except active swap)
 
-### Step 5: Slice Torso (9 Layers)
+### Step 5: Slice Torso (9 Layers; included in the 60-layer production total)
 1. **Messenger_Strap_Back:** Tan strap (deepest layer, behind torso)
 2. **Torso_Hoodie_Back:** Dark charcoal back panel (20% overlap cap at shoulders)
 3. **Torso_White_Tee:** White shirt (visible at neckline, sleeves)
@@ -266,7 +276,7 @@ Using Pen Tool (P):
 8. **Optional:** `+Torso_Bend_Mesh_Optional` (advanced deformers in Moho/Harmony)
 9. **Shadow_Torso_Underside:** Subtle shadow for depth
 
-### Step 6: Slice Arms (22 Layers)
+### Step 6: Slice Arms (22 Layers; included in the 60-layer production total)
 **Left Arm:**
 1. Outline `+Upper_Arm_L` from shoulder to elbow (charcoal hoodie color)
    - Paint 20% rounded cap at elbow joint (behind forearm)
@@ -282,7 +292,7 @@ Using Pen Tool (P):
 
 **Right Arm:** Mirror duplicate of left arm (_L → _R)
 
-### Step 7: Slice Legs (12 Layers)
+### Step 7: Slice Legs (12 Layers; included in the 60-layer production total)
 **Pelvis:**
 1. Outline `Pelvis_Jeans` (waistband + hip structure, navy denim)
    - Paint 20% rounded cap at both hip joints
@@ -299,7 +309,7 @@ Using Pen Tool (P):
 
 **Right Leg:** Mirror duplicate of left leg (_L → _R)
 
-### Step 8: Organize Hierarchy
+### Step 8: Organize Hierarchy (60 production layers/groups total)
 Create folder groups matching 01_HEAD_RIG structure:
 ```
 +Ahmed/

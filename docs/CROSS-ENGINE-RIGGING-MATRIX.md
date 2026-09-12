@@ -1,7 +1,7 @@
 # CROSS-ENGINE RIGGING MATRIX
-## Target Software Specifications & Export Settings
+# Target Software Specifications & Export Settings
 
-**Status:** ✅ Production Ready — Multi-Platform Animation Support  
+**Status:** ⚠️ Specification Only — PSDs and deployable engine rigs not yet available
 **Date Published:** 2026-09-12  
 **Primary Reference:** Ahmed (54-layer) & Sana (56-layer) PSD specifications  
 **Target Engines:** Adobe Character Animator 2024/2025 | Moho Pro 14 | Toon Boom Harmony | After Effects (Duik Bassel) | Blender 2D Grease Pencil

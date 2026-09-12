@@ -1,8 +1,8 @@
 # WANDERLAND EP01 — PRODUCTION PACKAGE v1.1
 ## Complete Production Assets — Character Models Updated
 
-**Status:** All Production Assets Published & Locked (v1.1 Character Models)  
-**Phase:** PHASE 1 COMPLETE — Ready for Rough Animatic Assembly  
+**Status:** Production specifications published; source, puppet, and referenced production binaries pending
+**Phase:** PHASE 1 SPECIFICATION PACKAGE COMPLETE — Ready to begin Rough Animatic Assembly
 **Date Published:** 2026-09-12  
 **Character Design Version:** v1.1 (Ahmed: Fair complexion, handsome refinement | Sana: Layered chestnut hair, emotional intelligence)  
 **Next Phase:** Rough Animatic Build (Temp VO + Storyboard Blocking)
@@ -11,9 +11,9 @@
 
 ## PRODUCTION PACKAGE SUMMARY
 
-The complete production suite for **WANDERLAND EP01 (Pilot)** has been published and locked. All critical assets for rough animatic assembly, temp VO recording, and story/pacing approval gate are now in place with **updated v1.1 character model sheets** providing refined aesthetic and production-ready specifications.
+The **WANDERLAND EP01 (Pilot)** production specifications have been published and the v1.1 character model documentation is locked. This package does not represent a complete set of production binaries: `project.json` intentionally leaves source and puppet binary fields null, and the PSD, remaining storyboard, graphic, and keyframe deliverables must still be created or imported. The documented timing, design, and staging specifications are ready to guide rough animatic assembly.
 
-### ✅ PUBLISHED & LOCKED ASSETS
+### ✅ PUBLISHED SPECIFICATIONS & DOCUMENTATION
 
 #### 1. **Canonical Character Model Sheets v1.1** ⭐ UPDATED
 
@@ -104,7 +104,7 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 
 ---
 
-#### 4. **SC06 Scoreboard Lower-Third Overlay Graphic**
+#### 4. **SC06 Scoreboard Lower-Third Overlay Graphic Specification**
 
 **File:** `SC06 Scoreboard Lower-Third Overlay Graphic`  
 **Location:** `/assets/graphics/SC06_scoreboard_lower_third_overlay.png`
@@ -133,7 +133,7 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 - **01:58** (SC06-04): Sana +1 flash → 2-2 (presentation win)
 - **02:00-02:03** (SC06-05): TIE banner with glow pulse (3s hold)
 
-**Integration:** Broadcast-ready asset. Sync timecodes to animatic during assembly with character expression reactions.
+**Integration:** Published specification only. The referenced graphic binary is pending; create or import it and sync its timecodes during assembly.
 
 ---
 
@@ -176,12 +176,12 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 
 ---
 
-#### 7. **Animatic Keyframe Panels v1.0** ✅ VALIDATED v1.1
+#### 7. **Animatic Keyframe Panel Specifications v1.0** ✅ VALIDATED v1.1
 
 **File:** `ANIMATIC-KEYFRAME-PANELS-v1.0.md`  
 **Location:** `/docs/ANIMATIC-KEYFRAME-PANELS-v1.0.md`
 
-**Three Pivotal Keyframe Panels Published (Validated Against v1.1):**
+**Three Pivotal Keyframe Panel Specifications (Validated Against v1.1):**
 
 1. **SC04 — Campus Race Hedge Shortcut** ✅ v1.1 Compatible
    - Ahmed stuck in hedge (deadpan dignity recovery pose, panic expression clearing to smirk)
@@ -208,7 +208,7 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 
 **Style Consistency:** Rough 2D animation pencil sketch + digital production wash, 16:9 field guides, subtle color accents
 
-**v1.1 Validation Status:** ✅ All 3 keyframe panels fully compatible with v1.1 character model sheets. No re-paneling required.
+**v1.1 Validation Status:** ✅ Specifications for all 3 keyframe panels are compatible with v1.1 character model sheets. The corresponding panel binaries remain pending; no re-paneling is required once produced.
 
 ---
 
@@ -246,8 +246,8 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 1. ✅ Master Timing Sheet (locked)
 2. ✅ Character Model Sheets v1.1 (locked — UPDATED)
 3. ✅ Storyboard Shot Breakdown (locked)
-4. ✅ Keyframe Panels (3 published, validated against v1.1)
-5. ✅ SC06 Scoreboard Graphic (ready for sync)
+4. ✅ Keyframe Panel Specifications (3 documented, validated against v1.1)
+5. ✅ SC06 Scoreboard Graphic Specification (binary pending)
 6. 🔲 Placeholder Storyboard Panels (remaining 8 shots — use v1.1 models)
 7. 🔲 Temp VO Recording (45 lines, use recording order)
 8. 🔲 Audio Stems (music + silence track for SC11-10)
@@ -290,22 +290,26 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 
 ## PRODUCTION ASSET CHECKLIST
 
-### ✅ PHASE 1 — COMPLETED
+### ✅ PHASE 1 — SPECIFICATIONS COMPLETED
 
 - [x] Story locked (5 adjustments approved)
 - [x] Master Timing Sheet v1.0 (all cumulative timecodes)
 - [x] **Character Model Sheets v1.1** ⭐ UPDATED (Ahmed: fair complexion, handsome / Sana: layered chestnut, emotional intelligence)
 - [x] Character Design Overview v1.1 (comprehensive design philosophy, original IP protections)
 - [x] Storyboard Shot Breakdown v1.0 (SC01-SC11 detailed specs, references v1.1 models)
-- [x] SC06 Scoreboard Graphic (broadcast-ready lower-third)
+- [x] SC06 Scoreboard Graphic Specification (binary pending)
 - [x] Character Repo Manifest v1.1 (rig specs, expression library, v1.1 traits)
 - [x] Production Manifest v1.1 (complete asset registry with v1.1 references)
-- [x] Animatic Keyframe Panels v1.0 (3 pivotal scenes, validated against v1.1)
+- [x] Animatic Keyframe Panel Specifications v1.0 (3 pivotal scenes, validated against v1.1)
 - [x] Temp VO Recording Order (45 lines organized by character)
 
-### 🔲 PHASE 1.5 — ROUGH ANIMATIC BUILD
+### 🔲 PHASE 1.5 — PENDING PRODUCTION ASSETS & ROUGH ANIMATIC BUILD
 
+- [ ] Source and puppet binaries (intentionally null in `project.json`)
+- [ ] PSD source deliverables (not yet present)
 - [ ] Remaining Storyboard Panels (8 of 11 scenes, use v1.1 character models)
+- [ ] Keyframe panel binaries (3 documented specifications; files pending)
+- [ ] SC06 scoreboard graphic binary (specification published; file pending)
 - [ ] Temp VO Recording Session (use v1.1 character specs for direction)
 - [ ] Graphics Integration (SC06 scoreboard timecode-synced)
 - [ ] Audio Stem Preparation (music + 2.0s silence track)
@@ -427,7 +431,7 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 
 ## PRODUCTION SIGN-OFF
 
-**WANDERLAND EP01 PRODUCTION PACKAGE v1.1 — COMPLETE & LOCKED**
+**WANDERLAND EP01 PRODUCTION SPECIFICATION PACKAGE v1.1 — DOCUMENTATION COMPLETE; PRODUCTION ASSETS PENDING**
 
 ### Deliverables Summary
 
@@ -439,22 +443,22 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 | **Sana Model Sheet v1.1** ⭐ | ✅ PUBLISHED | `/storyboard/characters/sana_model_sheet_v1.1.md` | Layered chestnut, emotionally intelligent, production-ready |
 | Character Design Overview v1.1 | ✅ PUBLISHED | `/docs/CHARACTER-DESIGN-v1.1-OVERVIEW.md` | Design philosophy, original IP protections |
 | Storyboard Breakdown | ✅ PUBLISHED | `/docs/EP01-STORYBOARD-v1.0.md` | SC01-SC11 detailed specs, v1.1 references |
-| SC06 Scoreboard Graphic | ✅ PUBLISHED | `/assets/graphics/SC06_*.png` | Broadcast-ready overlay |
+| SC06 Scoreboard Graphic Specification | ✅ PUBLISHED | `/assets/graphics/SC06_*.png` | Binary pending; specification is ready for implementation |
 | Production Manifest v1.1 | ✅ PUBLISHED | `/docs/PRODUCTION-MANIFEST-v1.1.md` | Complete asset registry with v1.1 character updates |
-| Keyframe Panels (3 of 11) | ✅ PUBLISHED | `/storyboard/keyframes/` | SC04, SC08/09, SC11-10, validated v1.1 |
+| Keyframe Panel Specifications (3 of 11) | ✅ PUBLISHED | `/storyboard/keyframes/` | SC04, SC08/09, SC11-10; panel binaries pending |
 | Temp VO Recording Order | ✅ READY | `/docs/EP01-TIMING-SHEET-v1.0.md` | 45 lines, optimized for studio |
 
 ### Ready For
 
-✅ Animatic artist briefing (v1.1 character models locked)  
-✅ VO recording session (v1.1 character personality direction)  
-✅ Graphics integration  
-✅ Rough animatic assembly  
+✅ Animatic artist briefing (v1.1 character models locked)
+✅ VO recording session (v1.1 character personality direction)
+🔲 Graphics integration (after graphic binary is created/imported)
+🔲 Rough animatic assembly (after pending assets are available)
 ✅ Story/pacing approval gate (with v1.1 character validation)
 
 ---
 
-**PHASE 1 COMPLETE. CHARACTER MODELS v1.1 PUBLISHED & LOCKED. READY TO ENTER PHASE 1.5: ROUGH ANIMATIC BUILD.**
+**PHASE 1 SPECIFICATIONS COMPLETE. CHARACTER MODEL DOCUMENTATION v1.1 PUBLISHED & LOCKED. SOURCE, PUPPET, PSD, GRAPHIC, STORYBOARD, AND KEYFRAME BINARIES REMAIN PENDING BEFORE PHASE 1.5 ROUGH ANIMATIC ASSEMBLY.**
 
 **Version Control:**
 - Ahmed Model Sheet: v1.0 → v1.1 ⭐
