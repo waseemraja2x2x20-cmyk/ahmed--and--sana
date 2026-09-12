@@ -36,3 +36,47 @@ directory documentation for the expected contents and naming conventions.
 See [`docs/PROJECT-OVERVIEW.md`](docs/PROJECT-OVERVIEW.md) for the complete
 production workflow, naming conventions, puppet requirements, scene layout,
 audio conventions, and quality-control checklist.
+
+See [`docs/PRODUCTION-READINESS.md`](docs/PRODUCTION-READINESS.md) for the
+current completion checklist, validation requirements, and known blockers.
+
+The repository structure is scaffolded for the full production tree. Editable
+PSD/AI files, approved individual reference crops, and rendered puppet
+previews must be supplied by the art workflow; placeholder files are not
+created for binary assets that do not yet exist.
+
+The reusable mouth reference grid is available at
+[`assets/mouths/lip-sync-viseme-grid.jpg`](assets/mouths/lip-sync-viseme-grid.jpg).
+It covers Neutral, Ah, D, Ee, F, L, M, Oh, R, S, Uh, and W-Oo mouth shapes for
+lip-sync preparation.
+
+The individual mouth assets currently include [`assets/mouths/Ah.png`](assets/mouths/Ah.png)
+(open-wide Ah), [`assets/mouths/D.png`](assets/mouths/D.png) (teeth showing),
+[`assets/mouths/Ee.png`](assets/mouths/Ee.png) (stretched smile), and
+[`assets/mouths/F.png`](assets/mouths/F.png) (bottom lip under top teeth). Add
+the remaining production visemes alongside them after they are drawn and
+approved against the canonical character artwork.
+
+The hand-pose reference sheet is available at
+[`assets/hands/hand-reference-sheet.jpg`](assets/hands/hand-reference-sheet.jpg).
+It covers relaxed, face-support, pointing, waving, and holding-object poses
+for reusable hand swaps and gesture preparation.
+
+The eye and eyebrow reference sheet is available at
+[`assets/eyes/eye-eyebrow-reference-sheet.jpg`](assets/eyes/eye-eyebrow-reference-sheet.jpg).
+It covers open, half-closed/blink, fully closed, neutral, angry, surprised,
+sad, worried, and confident states for Character Animator preparation.
+
+The Photoshop boy-puppet layer builder is available at
+[`scripts/photoshop/build-boy-puppet.jsx`](scripts/photoshop/build-boy-puppet.jsx).
+Run it in Photoshop with **File > Scripts > Browse**, then place the supplied
+artwork into the generated groups and save the result as `BOY.psd`.
+
+The matching Sana/Girl builder is available at
+[`scripts/photoshop/build-girl-puppet.jsx`](scripts/photoshop/build-girl-puppet.jsx).
+Use it the same way and save the generated document as `GIRL.psd`.
+
+The Blender boy-rig builder is available at
+[`scripts/blender/build-boy-rig.py`](scripts/blender/build-boy-rig.py). Run it
+from Blender's Text Editor, then import cut artwork as planes and parent each
+piece to the corresponding bone.
