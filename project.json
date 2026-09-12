@@ -190,7 +190,11 @@
       "scene-01",
       "scene-02",
       "scene-03",
+<<<<<<< HEAD
       "scene-04"
+=======
+      "scene-04"
+>>>>>>> origin/main
     ]
   },
   "audio": {
