@@ -84,6 +84,11 @@ if duplicates:
     )
 
 for scene in scene_list:
+    scene_entry = pathlib.Path(scene)
+    if scene_entry.is_absolute() or len(scene_entry.parts) != 1 or scene in {'.', '..'}:
+        raise SystemExit(
+            f"scenes.current_scenes[{scene}]: must be a single directory name"
+        )
     must_exist(pathlib.Path(project['scenes']['path']) / scene)
 
 scene_root = resolve_repo_path(project['scenes']['path'])

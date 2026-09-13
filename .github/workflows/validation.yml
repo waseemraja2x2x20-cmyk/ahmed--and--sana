@@ -104,6 +104,12 @@ jobs:
               )
 
           for scene_name in scene_list:
+              scene_entry = Path(scene_name)
+              if scene_entry.is_absolute() or len(scene_entry.parts) != 1 or scene_name in {'.', '..'}:
+                  failures.append(
+                      f"scenes.current_scenes[{scene_name}]: must be a single directory name"
+                  )
+                  continue
               check_path(str(Path(scene_root) / scene_name), f"scenes.current_scenes[{scene_name}]", kind='dir')
 
           scene_root_dir = resolve_repo_path(scene_root, 'scenes.path')
