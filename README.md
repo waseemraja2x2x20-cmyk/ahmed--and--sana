@@ -37,6 +37,9 @@ See [`docs/PROJECT-OVERVIEW.md`](docs/PROJECT-OVERVIEW.md) for the complete
 production workflow, naming conventions, puppet requirements, scene layout,
 audio conventions, and quality-control checklist.
 
+See [`docs/Wanderland Ep 01 - Master Production Asset Gallery.md`](docs/Wanderland%20Ep%2001%20-%20Master%20Production%20Asset%20Gallery.md) for the curated,
+deduplicated master asset gallery and repository catalog.
+
 See [`SETUP.md`](SETUP.md), [`WORKFLOW-GUIDE.md`](WORKFLOW-GUIDE.md), and
 [`VALIDATION.md`](VALIDATION.md) for repository setup, production workflow, and
 pre-flight validation checks.
