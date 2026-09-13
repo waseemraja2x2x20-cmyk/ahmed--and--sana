@@ -1,0 +1,86 @@
+name: Repository Validation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-project-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Validate project.json references
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('.').resolve()
+          data = json.loads((root / 'project.json').read_text(encoding='utf-8'))
+
+          failures = []
+
+          def check_path(path_value, label, kind='any'):
+              if path_value is None:
+                  return
+              p = root / path_value
+              if kind == 'dir' and not p.is_dir():
+                  failures.append(f"{label}: missing directory '{path_value}'")
+              elif kind == 'file' and not p.is_file():
+                  failures.append(f"{label}: missing file '{path_value}'")
+              elif kind == 'any' and not p.exists():
+                  failures.append(f"{label}: missing path '{path_value}'")
+
+          dir_fields = {
+              'assets.mouths.path': data['assets']['mouths']['path'],
+              'assets.eyes.path': data['assets']['eyes']['path'],
+              'assets.eyebrows.path': data['assets']['eyebrows']['path'],
+              'assets.hands.path': data['assets']['hands']['path'],
+              'scenes.path': data['scenes']['path'],
+              'audio.dialogue_path': data['audio']['dialogue_path'],
+              'audio.music_path': data['audio']['music_path'],
+              'audio.sfx_path': data['audio']['sfx_path'],
+              'scripts.path': data['scripts']['path'],
+              'exports.preview': data['exports']['preview'],
+              'exports.final': data['exports']['final'],
+          }
+
+          for label, value in dir_fields.items():
+              check_path(value, label, kind='dir')
+
+          file_fields = {
+              'characters.ahmed.source.preview': data['characters']['ahmed']['source']['preview'],
+              'characters.sana.source.preview': data['characters']['sana']['source']['preview'],
+              'characters.ahmed.reference': data['characters']['ahmed']['reference'],
+              'characters.sana.reference': data['characters']['sana']['reference'],
+              'characters.ahmed.source.psd': data['characters']['ahmed']['source']['psd'],
+              'characters.ahmed.source.ai': data['characters']['ahmed']['source']['ai'],
+              'characters.sana.source.psd': data['characters']['sana']['source']['psd'],
+              'characters.sana.source.ai': data['characters']['sana']['source']['ai'],
+              'characters.ahmed.puppet.psd': data['characters']['ahmed']['puppet']['psd'],
+              'characters.ahmed.puppet.preview': data['characters']['ahmed']['puppet']['preview'],
+              'characters.sana.puppet.psd': data['characters']['sana']['puppet']['psd'],
+              'characters.sana.puppet.preview': data['characters']['sana']['puppet']['preview'],
+          }
+
+          for label, value in file_fields.items():
+              if value is None:
+                  continue
+              check_path(value, label, kind='file')
+
+          scene_root = data['scenes']['path']
+          for scene_name in data['scenes']['current_scenes']:
+              check_path(f"{scene_root}{scene_name}", f"scenes.current_scenes[{scene_name}]", kind='dir')
+
+          if failures:
+              raise SystemExit("\n".join(failures))
+
+          print('project.json validation passed')
+          PY
