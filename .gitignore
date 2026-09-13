@@ -21,7 +21,6 @@ Thumbs.db
 # Keep the project structure while leaving generated deliverables local.
 exports/**
 !exports/
-!exports/.gitkeep
 !exports/previews/
 exports/previews/**
 !exports/previews/.gitkeep
