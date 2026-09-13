@@ -75,7 +75,7 @@
 - **00:53** **TRIGGER:** Key E + Key R (both tumble poses frozen mid-air). SFX: slow-mo heartbeat.
 - **00:55** Slow motion: the samosa rotates in the air above them. Key the arc across 72 frames (1320 to 1392). Both stare up, mouths `mouth_O`.
 - **00:58** **TRIGGER:** Key Y ON (shared imagination bubble above both heads). Inside bubble: the samosa landing safely on a plate, both eating happily, sitting together on the same bench. (Draw this bubble art.)
-- **01:02** Bubble pops (Key Y OFF, Key T OFF). Reality: the samosa descends...
+- **01:02** Bubble pops after a 4-second hold (Key Y OFF, Key T OFF). Reality: the samosa descends...
 - **01:05** ...and lands with a perfect PLOP on the **PROFESSOR'S** plate as he sits down at the canteen table with his lunch tray. SFX: soft plop.
 - **01:06** Total silence. SFX: single cricket chirp.
 - **01:07** Professor looks down at the plate. Looks up over his glasses. Slow zoom on his face. 12 frames.
@@ -124,7 +124,7 @@
     <tr><td>00:53</td><td>E + R</td><td>Both</td><td>tumble poses</td><td>1272</td></tr>
     <tr><td>00:55</td><td>T hold</td><td>Scene</td><td>slow-mo arc 72 frames</td><td>1320-1392</td></tr>
     <tr><td>00:58</td><td>Y</td><td>Scene</td><td>imagination bubble ON</td><td>1392</td></tr>
-    <tr><td>01:02</td><td>Y + T</td><td>Scene</td><td>bubble OFF, samosa drops</td><td>1488</td></tr>
+    <tr><td>01:02</td><td>Y + T</td><td>Scene</td><td>bubble OFF after 4-second hold, samosa drops</td><td>1488</td></tr>
     <tr><td>01:08</td><td>4 + 6</td><td>Both</td><td>shocked faces</td><td>1632</td></tr>
     <tr><td>01:17</td><td>7</td><td>Sana</td><td>angry brows flash</td><td>1848</td></tr>
     <tr><td>01:33</td><td>0</td><td>Scene</td><td>cut impact FX</td><td>2232</td></tr>
