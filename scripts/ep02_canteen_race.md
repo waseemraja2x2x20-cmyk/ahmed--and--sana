@@ -73,7 +73,7 @@
 
 ### Scene 3: The Slow Motion Samosa (00:50 to 01:10)
 - **00:53** **TRIGGER:** Key E + Key R (both tumble poses frozen mid-air). SFX: slow-mo heartbeat.
-- **00:55** Slow motion: the samosa rotates in the air above them. Key the arc across 72 frames (1320 to 1392). Both stare up, mouths `mouth_O`.
+- **00:55** Slow motion: the samosa rotates in the air above them. Key the arc across 72 frames (1320 to 1391). Both stare up, mouths `mouth_O`.
 - **00:58** **TRIGGER:** Key Y ON (shared imagination bubble above both heads). Inside bubble: the samosa landing safely on a plate, both eating happily, sitting together on the same bench. (Draw this bubble art.)
 - **01:02** Bubble pops on the next cue (Key Y OFF, Key T OFF). Reality: the samosa descends...
 - **01:05** ...and lands with a perfect PLOP on the **PROFESSOR'S** plate as he sits down at the canteen table with his lunch tray. SFX: soft plop.
@@ -122,7 +122,7 @@
     <tr><td>00:45</td><td>E</td><td>Ahmed</td><td>dive lunge 24 frames</td><td>1080-1104</td></tr>
     <tr><td>00:50</td><td>T + 0</td><td>Scene</td><td>samosa launch + impact</td><td>1200</td></tr>
     <tr><td>00:53</td><td>E + R</td><td>Both</td><td>tumble poses</td><td>1272</td></tr>
-    <tr><td>00:55</td><td>T hold</td><td>Scene</td><td>slow-mo arc 72 frames</td><td>1320-1392</td></tr>
+    <tr><td>00:55</td><td>T hold</td><td>Scene</td><td>slow-mo arc 72 frames</td><td>1320-1391</td></tr>
     <tr><td>00:58</td><td>Y</td><td>Scene</td><td>imagination bubble ON</td><td>1392</td></tr>
     <tr><td>01:02</td><td>Y + T</td><td>Scene</td><td>bubble OFF on next cue, samosa drops</td><td>1488</td></tr>
     <tr><td>01:08</td><td>4 + 6</td><td>Both</td><td>shocked faces</td><td>1632</td></tr>
@@ -154,11 +154,11 @@
 ## Animation Notes
 - Facing rule exception: in the race they BOTH run screen-left to screen-right. Keep Ahmed slightly behind Sana until 00:45 so the dive reads as a real chance.
 - Run cycle: build `leg_run_1` to `leg_run_4` as a swap set and cycle it every 4 frames. Sana's back-hair rig layer (`hair_back`) from the existing split-hair setup should lag 2 frames behind the head.
-- Slow motion: keep rendering at 24 fps, just stretch the samosa arc keyframes across 72 frames. Do not change project frame rate.
+- Slow motion: keep rendering at 24 fps, just stretch the samosa arc keyframes across 72 frames, ending on frame 1391 so the bubble can pop on at frame 1392. Do not change project frame rate.
 - The imagination bubble art (both friends eating together happily) is the hidden heart of the episode. Keep it on screen from the `00:58` cue until the `01:02` pop cue.
 - Professor calm voice is scarier than shouting. Record it flat and slow.
 - Ahmed flinch at 00:32 must be small (3-4 frames), it costs him the race and sets up "You leapt like a scared cat" in Scene 4.
-- Freeze frame holds from the 00:10 stare beat until Ahmed's 00:14 line, with the whistle carrying the moment, and the 01:38 ending freeze should hold briefly before the cut at 01:40.
+- Freeze frame holds from the 00:10 stare beat until Ahmed's 00:14 line, with the whistle carrying the moment, and the 01:38 ending freeze should carry straight through the end-card beat until the cut at 01:40.
 
 ## Recording Order (Recommended Workflow)
 1. Create new triggers: 9, Q, W, E, R, T, Y in puppets and scene.
@@ -173,7 +173,7 @@
 ## Quick Summary
 - 4 scenes, 100 seconds, full dialogue including the canteen worker and the calm terrifying professor
 - 7 new triggers (keys 9, Q, W, E, R, T, Y) listed at the top so you can build them before recording
-- The big setpiece is keyframed precisely: collision at frame 1200, slow-mo samosa arc stretched across 72 frames (1320 to 1392), landing at 1488
+- The big setpiece is keyframed precisely: collision at frame 1200, slow-mo samosa arc stretched across 72 frames (1320 to 1391), landing at 1488
 - The reluctant friendship moment is the imagination bubble at 00:58 (both happily eating together) and the geometry-obsessed samosa split in detention
 - New art checklist included: run cycles, dive and tumble poses, samosa in 3 states, canteen background, bubble art
 
