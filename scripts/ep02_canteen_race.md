@@ -155,7 +155,7 @@
 3. Draw the canteen background, professor seated, samosa (3 versions), imagination bubble art.
 4. Record all dialogue audio in one pass (including canteen worker + professor).
 5. Record trigger pass: race first (keys W, 9, E, R, T), then reaction pass (keys 1, 4, 6, 7, 8, Q, Y).
-6. Arm puppets one at a time for the W running trigger pass, since only one puppet receives triggers at a time in Character Animator.
+6. Arm puppets one at a time for the W running trigger pass, since only one puppet receives triggers at a time in Character Animator, then sync both recorded W passes to the shared `00:20` start in the timeline.
 7. Clean timing against the table above.
 8. Export 1080p, 24 fps to `exports/` as `ep02_canteen_race.mp4`.
 
