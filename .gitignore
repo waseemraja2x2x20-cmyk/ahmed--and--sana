@@ -19,11 +19,10 @@ Thumbs.db
 *.avi
 
 # Keep the project structure while leaving generated deliverables local.
-exports/**
-!exports/
+exports/*
 !exports/previews/
-exports/previews/**
+exports/previews/*
 !exports/previews/.gitkeep
 !exports/final/
-exports/final/**
+exports/final/*
 !exports/final/.gitkeep

@@ -26,6 +26,7 @@ Use this pre-flight checklist before opening or merging a PR.
 ```bash
 python3 - <<'PY'
 import json, pathlib
+from collections import Counter
 root = pathlib.Path('.').resolve()
 project = json.loads((root / 'project.json').read_text(encoding='utf-8'))
 
@@ -67,7 +68,7 @@ for file_ref in [
         must_exist(file_ref)
 
 scene_list = project['scenes']['current_scenes']
-duplicates = sorted({name for name in scene_list if scene_list.count(name) > 1})
+duplicates = sorted(name for name, count in Counter(scene_list).items() if count > 1)
 if duplicates:
     raise SystemExit(
         "scenes.current_scenes contains duplicate entries: "

@@ -23,6 +23,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          from collections import Counter
           from pathlib import Path
 
           root = Path('.').resolve()
@@ -80,7 +81,9 @@ jobs:
 
           scene_root = data['scenes']['path']
           scene_list = data['scenes']['current_scenes']
-          duplicate_scenes = sorted({name for name in scene_list if scene_list.count(name) > 1})
+          duplicate_scenes = sorted(
+              name for name, count in Counter(scene_list).items() if count > 1
+          )
           if duplicate_scenes:
               failures.append(
                   "scenes.current_scenes contains duplicate entries: "
