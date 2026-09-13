@@ -103,23 +103,23 @@
 
 ## Trigger Timing Table (Quick Reference While Recording)
 
-Time | Key | Character/Scene | Action | Frames (24fps)
---- | --- | --- | --- | ---
-00:08 | Q | Scene | white flash freeze | 192
-00:20 | W + 9 | Both + Scene | running poses + speed lines | 480
-00:31 | 2 ARM | Sana | magazine out mid-run | 744
-00:38 | 8 | Ahmed | worried stumble | 912
-00:42 | 1 | Sana | point + smirk | 1008
-00:45 | E | Ahmed | dive lunge 24 frames | 1080-1104
-00:50 | T + 0 | Scene | samosa launch + impact | 1200
-00:53 | E + R | Both | tumble poses | 1272
-00:55 | T hold | Scene | slow-mo arc 72 frames | 1320-1392
-00:58 | Y | Scene | imagination bubble ON | 1392
-01:02 | Y + T | Scene | bubble OFF, samosa drops | 1488
-01:08 | 4 + 6 | Both | shocked faces | 1632
-01:17 | 7 | Sana | angry brows flash | 1848
-01:33 | 0 | Scene | cut impact FX | 2232
-01:38 | - | End card | VS slam | 2352
+| Time | Key | Character/Scene | Action | Frames (24fps) |
+| --- | --- | --- | --- | --- |
+| 00:08 | Q | Scene | white flash freeze | 192 |
+| 00:20 | W + 9 | Both + Scene | running poses + speed lines | 480 |
+| 00:31 | 2 ARM | Sana | magazine out mid-run | 744 |
+| 00:38 | 8 | Ahmed | worried stumble | 912 |
+| 00:42 | 1 | Sana | point + smirk | 1008 |
+| 00:45 | E | Ahmed | dive lunge 24 frames | 1080-1104 |
+| 00:50 | T + 0 | Scene | samosa launch + impact | 1200 |
+| 00:53 | E + R | Both | tumble poses | 1272 |
+| 00:55 | T hold | Scene | slow-mo arc 72 frames | 1320-1392 |
+| 00:58 | Y | Scene | imagination bubble ON | 1392 |
+| 01:02 | Y + T | Scene | bubble OFF, samosa drops | 1488 |
+| 01:08 | 4 + 6 | Both | shocked faces | 1632 |
+| 01:17 | 7 | Sana | angry brows flash | 1848 |
+| 01:33 | 0 | Scene | cut impact FX | 2232 |
+| 01:38 | - | End card | VS slam | 2352 |
 
 ## Sound Effects List
 - **00:00** canteen crowd murmur + tray clatter loop
