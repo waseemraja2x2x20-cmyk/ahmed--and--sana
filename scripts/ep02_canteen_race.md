@@ -75,7 +75,7 @@
 - **00:53** **TRIGGER:** Key E + Key R (both tumble poses frozen mid-air). SFX: slow-mo heartbeat.
 - **00:55** Slow motion: the samosa rotates in the air above them. Key the arc across 72 frames (1320 to 1392). Both stare up, mouths `mouth_O`.
 - **00:58** **TRIGGER:** Key Y ON (shared imagination bubble above both heads). Inside bubble: the samosa landing safely on a plate, both eating happily, sitting together on the same bench. (Draw this bubble art.)
-- **01:02** Bubble pops after a 4-second hold (Key Y OFF, Key T OFF). Reality: the samosa descends...
+- **01:02** Bubble pops on the next cue (Key Y OFF, Key T OFF). Reality: the samosa descends...
 - **01:05** ...and lands with a perfect PLOP on the **PROFESSOR'S** plate as he sits down at the canteen table with his lunch tray. SFX: soft plop.
 - **01:06** Total silence. SFX: single cricket chirp.
 - **01:07** Professor looks down at the plate. Looks up over his glasses. Slow zoom on his face. 12 frames.
@@ -124,7 +124,7 @@
     <tr><td>00:53</td><td>E + R</td><td>Both</td><td>tumble poses</td><td>1272</td></tr>
     <tr><td>00:55</td><td>T hold</td><td>Scene</td><td>slow-mo arc 72 frames</td><td>1320-1392</td></tr>
     <tr><td>00:58</td><td>Y</td><td>Scene</td><td>imagination bubble ON</td><td>1392</td></tr>
-    <tr><td>01:02</td><td>Y + T</td><td>Scene</td><td>bubble OFF after 4-second hold, samosa drops</td><td>1488</td></tr>
+    <tr><td>01:02</td><td>Y + T</td><td>Scene</td><td>bubble OFF on next cue, samosa drops</td><td>1488</td></tr>
     <tr><td>01:08</td><td>4 + 6</td><td>Both</td><td>shocked faces</td><td>1632</td></tr>
     <tr><td>01:17</td><td>7</td><td>Sana</td><td>angry brows flash</td><td>1848</td></tr>
     <tr><td>01:33</td><td>0</td><td>Scene</td><td>cut impact FX</td><td>2232</td></tr>
@@ -155,7 +155,7 @@
 - Facing rule exception: in the race they BOTH run screen-left to screen-right. Keep Ahmed slightly behind Sana until 00:45 so the dive reads as a real chance.
 - Run cycle: build `leg_run_1` to `leg_run_4` as a swap set and cycle it every 4 frames. Sana's back-hair rig layer (`hair_back`) from the existing split-hair setup should lag 2 frames behind the head.
 - Slow motion: keep rendering at 24 fps, just stretch the samosa arc keyframes across 72 frames. Do not change project frame rate.
-- The imagination bubble art (both friends eating together happily) is the hidden heart of the episode. Keep it on screen 4 full seconds.
+- The imagination bubble art (both friends eating together happily) is the hidden heart of the episode. Keep it on screen from the `00:58` cue until the `01:02` pop cue.
 - Professor calm voice is scarier than shouting. Record it flat and slow.
 - Ahmed flinch at 00:32 must be small (3-4 frames), it costs him the race and sets up "You leapt like a scared cat" in Scene 4.
 - Freeze frame holds from the 00:10 stare beat until Ahmed's 00:14 line, with the whistle carrying the moment, and the 01:38 ending freeze should hold briefly before the cut at 01:40.
