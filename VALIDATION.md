@@ -30,8 +30,16 @@ from collections import Counter
 root = pathlib.Path('.').resolve()
 project = json.loads((root / 'project.json').read_text(encoding='utf-8'))
 
+def resolve_repo_path(path):
+    p = (root / pathlib.Path(path)).resolve()
+    try:
+        p.relative_to(root)
+    except ValueError:
+        raise SystemExit(f"Path escapes repository root: {path}")
+    return p
+
 def must_exist(path):
-    p = root / path
+    p = resolve_repo_path(path)
     if not p.exists():
         raise SystemExit(f"Missing path: {path}")
 

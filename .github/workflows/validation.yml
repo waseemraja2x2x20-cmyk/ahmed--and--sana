@@ -31,15 +31,28 @@ jobs:
 
           failures = []
 
-          def check_path(path_value, label, kind='any'):
+          def resolve_repo_path(path_value, label):
               if path_value is None:
+                  return None
+
+              resolved = (root / Path(path_value)).resolve()
+              try:
+                  resolved.relative_to(root)
+              except ValueError:
+                  failures.append(f"{label}: path escapes repository root '{path_value}'")
+                  return None
+
+              return resolved
+
+          def check_path(path_value, label, kind='any'):
+              resolved = resolve_repo_path(path_value, label)
+              if resolved is None:
                   return
-              p = root / path_value
-              if kind == 'dir' and not p.is_dir():
+              if kind == 'dir' and not resolved.is_dir():
                   failures.append(f"{label}: missing directory '{path_value}'")
-              elif kind == 'file' and not p.is_file():
+              elif kind == 'file' and not resolved.is_file():
                   failures.append(f"{label}: missing file '{path_value}'")
-              elif kind == 'any' and not p.exists():
+              elif kind == 'any' and not resolved.exists():
                   failures.append(f"{label}: missing path '{path_value}'")
 
           dir_fields = {
