@@ -54,6 +54,14 @@ for file_ref in [
     project['characters']['sana']['source']['preview'],
     project['characters']['ahmed']['reference'],
     project['characters']['sana']['reference'],
+    project['characters']['ahmed']['source']['psd'],
+    project['characters']['ahmed']['source']['ai'],
+    project['characters']['sana']['source']['psd'],
+    project['characters']['sana']['source']['ai'],
+    project['characters']['ahmed']['puppet']['psd'],
+    project['characters']['ahmed']['puppet']['preview'],
+    project['characters']['sana']['puppet']['psd'],
+    project['characters']['sana']['puppet']['preview'],
 ]:
     if file_ref is not None:
         must_exist(file_ref)

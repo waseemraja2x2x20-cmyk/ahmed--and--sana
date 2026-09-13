@@ -22,6 +22,8 @@ Thumbs.db
 exports/*
 !exports/.gitkeep
 !exports/previews/
+exports/previews/*
 !exports/previews/.gitkeep
 !exports/final/
+exports/final/*
 !exports/final/.gitkeep
