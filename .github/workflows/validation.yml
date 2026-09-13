@@ -112,6 +112,11 @@ jobs:
                       f"scenes.current_scenes[{scene_name}]: must be a single directory name"
                   )
                   continue
+              if not scene_dir_pattern.match(scene_name):
+                  failures.append(
+                      f"scenes.current_scenes[{scene_name}]: must match scene-NN or scene-NN-suffix format"
+                  )
+                  continue
               check_path(str(Path(scene_root) / scene_name), f"scenes.current_scenes[{scene_name}]", kind='dir')
 
           scene_root_dir = resolve_repo_path(scene_root, 'scenes.path')

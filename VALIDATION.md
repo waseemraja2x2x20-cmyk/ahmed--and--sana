@@ -90,6 +90,10 @@ for scene in scene_list:
         raise SystemExit(
             f"scenes.current_scenes[{scene}]: must be a single directory name"
         )
+    if not scene_dir_pattern.match(scene):
+        raise SystemExit(
+            f"scenes.current_scenes[{scene}]: must match scene-NN or scene-NN-suffix format"
+        )
     must_exist(pathlib.Path(project['scenes']['path']) / scene)
 
 scene_root = resolve_repo_path(project['scenes']['path'])
