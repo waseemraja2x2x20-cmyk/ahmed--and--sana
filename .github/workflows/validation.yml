@@ -122,10 +122,18 @@ jobs:
           scene_root_dir = resolve_repo_path(scene_root, 'scenes.path')
           if scene_root_dir is not None and scene_root_dir.is_dir():
               listed_scenes = set(scene_list)
+              all_scene_dirs = {entry.name for entry in scene_root_dir.iterdir() if entry.is_dir()}
+              invalid_scene_dirs = sorted(
+                  name for name in all_scene_dirs if not scene_dir_pattern.match(name)
+              )
+              if invalid_scene_dirs:
+                  failures.append(
+                      "animation/scenes contains directories with invalid names: "
+                      + ", ".join(invalid_scene_dirs)
+                  )
+
               actual_scenes = {
-                  entry.name
-                  for entry in scene_root_dir.iterdir()
-                  if entry.is_dir() and scene_dir_pattern.match(entry.name)
+                  name for name in all_scene_dirs if scene_dir_pattern.match(name)
               }
 
               missing_from_manifest = sorted(actual_scenes - listed_scenes)

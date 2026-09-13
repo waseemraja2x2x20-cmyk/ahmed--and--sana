@@ -98,8 +98,15 @@ for scene in scene_list:
 
 scene_root = resolve_repo_path(project['scenes']['path'])
 listed_scenes = set(scene_list)
-actual_scenes = {entry.name for entry in scene_root.iterdir() if entry.is_dir()}
-actual_scenes = {name for name in actual_scenes if scene_dir_pattern.match(name)}
+all_scene_dirs = {entry.name for entry in scene_root.iterdir() if entry.is_dir()}
+invalid_scene_dirs = sorted(name for name in all_scene_dirs if not scene_dir_pattern.match(name))
+if invalid_scene_dirs:
+    raise SystemExit(
+        "animation/scenes contains directories with invalid names: "
+        + ", ".join(invalid_scene_dirs)
+    )
+
+actual_scenes = {name for name in all_scene_dirs if scene_dir_pattern.match(name)}
 unexpected = sorted(actual_scenes - listed_scenes)
 if unexpected:
     raise SystemExit(
