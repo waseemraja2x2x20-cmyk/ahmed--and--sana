@@ -117,7 +117,7 @@
 | 0:58 | Y | Scene | imagination bubble ON | 1392 |
 | 1:02 | Y + T | Scene | bubble OFF, samosa drops | 1488 |
 | 1:08 | 4 + 6 | Both | shocked faces | 1632 |
-| 1:17 | 7 | Sana | angry brows flash | 1728 |
+| 1:17 | 7 | Sana | angry brows flash | 1848 |
 | 1:33 | 0 | Scene | cut impact FX | 2232 |
 | 1:38 | - | End card | VS slam | 2352 |
 
@@ -147,7 +147,7 @@
 - The imagination bubble art (both friends eating together happily) is the hidden heart of the episode. Keep it on screen 4 full seconds.
 - Professor calm voice is scarier than shouting. Record it flat and slow.
 - Ahmed flinch at 0:32 must be small (3-4 frames), it costs him the race and sets up "You leapt like a scared cat" in Scene 4.
-- Freeze frame holds: 0:08 to 0:14 (6 sec is too long, use 4 sec + whistle), and 1:38 end card holds 1.5 seconds before the slam.
+- Freeze frame holds: 0:08 to 0:14 (6 seconds total, with the whistle carrying the stare), and 1:38 end card holds 1.5 seconds before the slam.
 
 ## Recording Order (Recommended Workflow)
 1. Create new triggers: 9, Q, W, E, R, T, Y in puppets and scene.
