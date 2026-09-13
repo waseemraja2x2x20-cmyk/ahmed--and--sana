@@ -25,10 +25,11 @@ Use this pre-flight checklist before opening or merging a PR.
 
 ```bash
 python3 - <<'PY'
-import json, pathlib
+import json, pathlib, re
 from collections import Counter
 root = pathlib.Path('.').resolve()
 project = json.loads((root / 'project.json').read_text(encoding='utf-8'))
+scene_dir_pattern = re.compile(r'^scene-\d{2}(?:-[a-z0-9-]+)?$')
 
 def resolve_repo_path(path):
     p = (root / pathlib.Path(path)).resolve()
@@ -94,6 +95,7 @@ for scene in scene_list:
 scene_root = resolve_repo_path(project['scenes']['path'])
 listed_scenes = set(scene_list)
 actual_scenes = {entry.name for entry in scene_root.iterdir() if entry.is_dir()}
+actual_scenes = {name for name in actual_scenes if scene_dir_pattern.match(name)}
 unexpected = sorted(actual_scenes - listed_scenes)
 if unexpected:
     raise SystemExit(

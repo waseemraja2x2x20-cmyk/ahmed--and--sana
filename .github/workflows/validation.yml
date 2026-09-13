@@ -23,11 +23,13 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          import re
           from collections import Counter
           from pathlib import Path
 
           root = Path('.').resolve()
           data = json.loads((root / 'project.json').read_text(encoding='utf-8'))
+          scene_dir_pattern = re.compile(r'^scene-\d{2}(?:-[a-z0-9-]+)?$')
 
           failures = []
 
@@ -115,7 +117,11 @@ jobs:
           scene_root_dir = resolve_repo_path(scene_root, 'scenes.path')
           if scene_root_dir is not None and scene_root_dir.is_dir():
               listed_scenes = set(scene_list)
-              actual_scenes = {entry.name for entry in scene_root_dir.iterdir() if entry.is_dir()}
+              actual_scenes = {
+                  entry.name
+                  for entry in scene_root_dir.iterdir()
+                  if entry.is_dir() and scene_dir_pattern.match(entry.name)
+              }
 
               missing_from_manifest = sorted(actual_scenes - listed_scenes)
               if missing_from_manifest:
