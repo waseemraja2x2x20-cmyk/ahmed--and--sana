@@ -168,7 +168,7 @@
 5. Record trigger pass: race first (keys W, 9, E, R, T), then reaction pass (keys 1, 4, 6, 7, 8, Q, Y).
 6. Arm puppets one at a time for the W running trigger pass, since Character Animator records the shared W trigger separately per puppet, then sync both recorded W passes to the shared `00:20` start in the timeline.
 7. Clean timing against the table above.
-8. Export 1080p, 24 fps to `exports/` as `ep02_canteen_race.mp4`.
+8. Export 1080p, 24 fps to `exports/final/` as `ep02_canteen_race.mp4`.
 
 ## Quick Summary
 - 4 scenes, 100 seconds, full dialogue including the canteen worker and the calm terrifying professor
