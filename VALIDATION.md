@@ -29,7 +29,7 @@ import json, pathlib, re
 from collections import Counter
 root = pathlib.Path('.').resolve()
 project = json.loads((root / 'project.json').read_text(encoding='utf-8'))
-scene_dir_pattern = re.compile(r'^scene-\d{2}(?:-[a-z0-9-]+)?$')
+scene_dir_pattern = re.compile(r'^scene-[0-9]{2}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$')
 
 def resolve_repo_path(path):
     p = (root / pathlib.Path(path)).resolve()
