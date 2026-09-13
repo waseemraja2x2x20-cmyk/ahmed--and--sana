@@ -24,7 +24,7 @@
 ## New Triggers to Create for This Episode
 - **Key 9** Scene FX: speed lines + dust trails ON/OFF (hold)
 - **Key Q** Scene FX: white flash freeze frame (one-shot)
-- **Key W** Both puppets: running pose swap ON/OFF (same key in both puppets)
+- **Key W** Both puppets: running pose swap ON/OFF (same key in both puppets; record each puppet separately, then sync both W passes to the same start point)
 - **Key E** Ahmed: dive lunge / tumble pose (one-shot)
 - **Key R** Sana: tumble pose (one-shot)
 - **Key T** Scene FX: flying samosa projectile layer (one-shot, long visibility)
