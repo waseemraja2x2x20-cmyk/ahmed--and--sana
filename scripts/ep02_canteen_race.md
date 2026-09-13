@@ -24,7 +24,7 @@
 ## New Triggers to Create for This Episode
 - **Key 9** Scene FX: speed lines + dust trails ON/OFF (hold)
 - **Key Q** Scene FX: white flash freeze frame (one-shot)
-- **Key W** Both puppets: running pose swap ON/OFF (same key in both puppets; record each puppet separately, then sync both W passes to the same start point)
+- **Key W** Both puppets: running pose swap ON/OFF (shared trigger name mapped separately in each puppet; record each puppet separately, then sync both W passes to the same start point)
 - **Key E** Ahmed: dive lunge / tumble pose (one-shot)
 - **Key R** Sana: tumble pose (one-shot)
 - **Key T** Scene FX: flying samosa projectile layer (one-shot, long visibility)
@@ -166,7 +166,7 @@
 3. Draw the canteen background, professor seated, samosa (3 versions), imagination bubble art.
 4. Record all dialogue audio in one pass (including canteen worker + professor).
 5. Record trigger pass: race first (keys W, 9, E, R, T), then reaction pass (keys 1, 4, 6, 7, 8, Q, Y).
-6. Arm puppets one at a time for the W running trigger pass, since only one puppet receives triggers at a time in Character Animator, then sync both recorded W passes to the shared `00:20` start in the timeline.
+6. Arm puppets one at a time for the W running trigger pass, since Character Animator records the shared W trigger separately per puppet, then sync both recorded W passes to the shared `00:20` start in the timeline.
 7. Clean timing against the table above.
 8. Export 1080p, 24 fps to `exports/` as `ep02_canteen_race.mp4`.
 
