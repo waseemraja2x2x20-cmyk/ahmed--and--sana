@@ -106,15 +106,15 @@ jobs:
           for scene_name in scene_list:
               check_path(str(Path(scene_root) / scene_name), f"scenes.current_scenes[{scene_name}]", kind='dir')
 
-          scene_root_dir = root / Path(scene_root)
-          if scene_root_dir.is_dir():
+          scene_root_dir = resolve_repo_path(scene_root, 'scenes.path')
+          if scene_root_dir is not None and scene_root_dir.is_dir():
               listed_scenes = set(scene_list)
               actual_scenes = {entry.name for entry in scene_root_dir.iterdir() if entry.is_dir()}
 
               missing_from_manifest = sorted(actual_scenes - listed_scenes)
               if missing_from_manifest:
                   failures.append(
-                      "scenes.current_scenes is missing scene directories: "
+                      "animation/scenes contains directories not listed in scenes.current_scenes: "
                       + ", ".join(missing_from_manifest)
                   )
 
