@@ -142,7 +142,7 @@
 
 ## Animation Notes
 - Facing rule exception: in the race they BOTH run screen-left to screen-right. Keep Ahmed slightly behind Sana until 0:45 so the dive reads as a real chance.
-- Run cycle: build `leg_run_1` to `leg_run_4` as a swap set and cycle it every 4 frames. Sana's `hair_back` layer should lag 2 frames behind the head.
+- Run cycle: build `leg_run_1` to `leg_run_4` as a swap set and cycle it every 4 frames. Sana's back-hair rig layer (`hair_back`) should lag 2 frames behind the head.
 - Slow motion: keep rendering at 24 fps, just stretch the samosa arc keyframes across 72 frames. Do not change project frame rate.
 - The imagination bubble art (both friends eating together happily) is the hidden heart of the episode. Keep it on screen 4 full seconds.
 - Professor calm voice is scarier than shouting. Record it flat and slow.
