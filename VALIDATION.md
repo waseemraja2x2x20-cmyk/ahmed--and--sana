@@ -7,7 +7,7 @@ Use this pre-flight checklist before opening or merging a PR.
 - [ ] `project.json` is valid JSON.
 - [ ] File references in `project.json` exist or are explicitly `null`.
 - [ ] Directory path entries in `project.json` exist.
-- [ ] `scenes.current_scenes` entries exist in `animation/scenes/`, and there are no unexpected scene folders missing from the manifest list.
+- [ ] `scenes.current_scenes` has no duplicates, entries exist in `animation/scenes/`, and there are no unexpected scene folders missing from the manifest list.
 
 ## Structure checks
 
@@ -66,11 +66,19 @@ for file_ref in [
     if file_ref is not None:
         must_exist(file_ref)
 
-for scene in project['scenes']['current_scenes']:
+scene_list = project['scenes']['current_scenes']
+duplicates = sorted({name for name in scene_list if scene_list.count(name) > 1})
+if duplicates:
+    raise SystemExit(
+        "scenes.current_scenes contains duplicate entries: "
+        + ", ".join(duplicates)
+    )
+
+for scene in scene_list:
     must_exist(pathlib.Path(project['scenes']['path']) / scene)
 
 scene_root = root / pathlib.Path(project['scenes']['path'])
-listed_scenes = set(project['scenes']['current_scenes'])
+listed_scenes = set(scene_list)
 actual_scenes = {entry.name for entry in scene_root.iterdir() if entry.is_dir()}
 unexpected = sorted(actual_scenes - listed_scenes)
 if unexpected:

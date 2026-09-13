@@ -79,12 +79,20 @@ jobs:
               check_path(value, label, kind='file')
 
           scene_root = data['scenes']['path']
-          for scene_name in data['scenes']['current_scenes']:
+          scene_list = data['scenes']['current_scenes']
+          duplicate_scenes = sorted({name for name in scene_list if scene_list.count(name) > 1})
+          if duplicate_scenes:
+              failures.append(
+                  "scenes.current_scenes contains duplicate entries: "
+                  + ", ".join(duplicate_scenes)
+              )
+
+          for scene_name in scene_list:
               check_path(str(Path(scene_root) / scene_name), f"scenes.current_scenes[{scene_name}]", kind='dir')
 
           scene_root_dir = root / Path(scene_root)
           if scene_root_dir.is_dir():
-              listed_scenes = set(data['scenes']['current_scenes'])
+              listed_scenes = set(scene_list)
               actual_scenes = {entry.name for entry in scene_root_dir.iterdir() if entry.is_dir()}
 
               missing_from_manifest = sorted(actual_scenes - listed_scenes)
