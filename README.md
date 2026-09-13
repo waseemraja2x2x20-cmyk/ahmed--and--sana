@@ -40,6 +40,10 @@ audio conventions, and quality-control checklist.
 See [`docs/Wanderland Ep 01 - Master Production Asset Gallery.md`](docs/Wanderland%20Ep%2001%20-%20Master%20Production%20Asset%20Gallery.md) for the curated,
 deduplicated master asset gallery and repository catalog.
 
+See [`SETUP.md`](SETUP.md), [`WORKFLOW-GUIDE.md`](WORKFLOW-GUIDE.md), and
+[`VALIDATION.md`](VALIDATION.md) for repository setup, production workflow, and
+pre-flight validation checks.
+
 See [`docs/PRODUCTION-READINESS.md`](docs/PRODUCTION-READINESS.md) for the
 current completion checklist, validation requirements, and known blockers.
 
