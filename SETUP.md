@@ -10,7 +10,7 @@
 
 1. Clone the repository.
 2. Ensure these core folders exist (they are scaffolded in Git):
-   - `characters/`, `puppets/`, `animation/`, `assets/`, `audio/`, `exports/`, `scenes/`, `scripts/`, `expressions/`, `references/`, `docs/`
+   - `characters/`, `puppets/`, `animation/`, `animation/scenes/`, `animation/expressions/`, `assets/`, `audio/`, `exports/`, `scripts/`, `references/`, `docs/`
 3. Keep `project.json` aligned with any directory/path changes.
 
 ## Optional local pre-commit hook (recommended)

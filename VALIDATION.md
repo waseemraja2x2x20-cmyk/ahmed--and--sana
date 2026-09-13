@@ -59,7 +59,7 @@ for file_ref in [
         must_exist(file_ref)
 
 for scene in project['scenes']['current_scenes']:
-    must_exist(project['scenes']['path'] + scene)
+    must_exist(pathlib.Path(project['scenes']['path']) / scene)
 
 print('Validation passed')
 PY
