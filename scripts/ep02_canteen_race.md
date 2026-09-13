@@ -147,7 +147,7 @@
 - The imagination bubble art (both friends eating together happily) is the hidden heart of the episode. Keep it on screen 4 full seconds.
 - Professor calm voice is scarier than shouting. Record it flat and slow.
 - Ahmed flinch at 0:32 must be small (3-4 frames), it costs him the race and sets up "You leapt like a scared cat" in Scene 4.
-- Freeze frame holds: 0:08 to 0:14 (6 seconds total, with the whistle carrying the stare), and 1:38 end card holds 1.5 seconds before the slam.
+- Freeze frame holds: 0:10 to 0:14 (4 seconds with the whistle carrying the stare), and the 1:38 ending freeze should hold briefly before the cut at 1:40.
 
 ## Recording Order (Recommended Workflow)
 1. Create new triggers: 9, Q, W, E, R, T, Y in puppets and scene.
