@@ -103,23 +103,34 @@
 
 ## Trigger Timing Table (Quick Reference While Recording)
 
-| Time | Key | Character/Scene | Action | Frames (24fps) |
-| --- | --- | --- | --- | --- |
-| 00:08 | Q | Scene | white flash freeze | 192 |
-| 00:20 | W + 9 | Both + Scene | running poses + speed lines | 480 |
-| 00:31 | 2 ARM | Sana | magazine out mid-run | 744 |
-| 00:38 | 8 | Ahmed | worried stumble | 912 |
-| 00:42 | 1 | Sana | point + smirk | 1008 |
-| 00:45 | E | Ahmed | dive lunge 24 frames | 1080-1104 |
-| 00:50 | T + 0 | Scene | samosa launch + impact | 1200 |
-| 00:53 | E + R | Both | tumble poses | 1272 |
-| 00:55 | T hold | Scene | slow-mo arc 72 frames | 1320-1392 |
-| 00:58 | Y | Scene | imagination bubble ON | 1392 |
-| 01:02 | Y + T | Scene | bubble OFF, samosa drops | 1488 |
-| 01:08 | 4 + 6 | Both | shocked faces | 1632 |
-| 01:17 | 7 | Sana | angry brows flash | 1848 |
-| 01:33 | 0 | Scene | cut impact FX | 2232 |
-| 01:38 | - | End card | VS slam | 2352 |
+<table>
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Key</th>
+      <th>Character/Scene</th>
+      <th>Action</th>
+      <th>Frames (24fps)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>00:08</td><td>Q</td><td>Scene</td><td>white flash freeze</td><td>192</td></tr>
+    <tr><td>00:20</td><td>W + 9</td><td>Both + Scene</td><td>running poses + speed lines</td><td>480</td></tr>
+    <tr><td>00:31</td><td>2 ARM</td><td>Sana</td><td>magazine out mid-run</td><td>744</td></tr>
+    <tr><td>00:38</td><td>8</td><td>Ahmed</td><td>worried stumble</td><td>912</td></tr>
+    <tr><td>00:42</td><td>1</td><td>Sana</td><td>point + smirk</td><td>1008</td></tr>
+    <tr><td>00:45</td><td>E</td><td>Ahmed</td><td>dive lunge 24 frames</td><td>1080-1104</td></tr>
+    <tr><td>00:50</td><td>T + 0</td><td>Scene</td><td>samosa launch + impact</td><td>1200</td></tr>
+    <tr><td>00:53</td><td>E + R</td><td>Both</td><td>tumble poses</td><td>1272</td></tr>
+    <tr><td>00:55</td><td>T hold</td><td>Scene</td><td>slow-mo arc 72 frames</td><td>1320-1392</td></tr>
+    <tr><td>00:58</td><td>Y</td><td>Scene</td><td>imagination bubble ON</td><td>1392</td></tr>
+    <tr><td>01:02</td><td>Y + T</td><td>Scene</td><td>bubble OFF, samosa drops</td><td>1488</td></tr>
+    <tr><td>01:08</td><td>4 + 6</td><td>Both</td><td>shocked faces</td><td>1632</td></tr>
+    <tr><td>01:17</td><td>7</td><td>Sana</td><td>angry brows flash</td><td>1848</td></tr>
+    <tr><td>01:33</td><td>0</td><td>Scene</td><td>cut impact FX</td><td>2232</td></tr>
+    <tr><td>01:38</td><td>-</td><td>End card</td><td>VS slam</td><td>2352</td></tr>
+  </tbody>
+</table>
 
 ## Sound Effects List
 - **00:00** canteen crowd murmur + tray clatter loop
