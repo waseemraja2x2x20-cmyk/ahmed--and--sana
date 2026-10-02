@@ -91,8 +91,22 @@ Each story shot is timed to [`docs/EP01-TIMING-SHEET-v1.0.md`](docs/EP01-TIMING-
 instead of the sheet's 30s credits placeholder, so the review runtime is 4:58.5
 rather than 5:20.5.
 The characters are vector placeholders of Ahmed and Sana, drawn from the
-canonical palette and silhouettes. They are not production art. The player
-includes:
+canonical palette and silhouettes. They are not production art. They have
+glossy anime-style eyes, tapered brows, soft heart-shaped faces, shaded skin,
+hair and clothes, and hands with fingers (open, relaxed, fist and point).
+Their feet are profile sneakers. Movement is spring-driven: poses blend
+instead of snapping, characters breathe, sway and nod while talking, and head
+turns rotate in 3D through edge-on.
+
+The presentation is cinematic. It uses a ~2.2:1 scope letterbox with
+subtitles in the bar, and a multiplane parallax camera that pushes and drifts
+slowly on every shot. Backgrounds get depth of field scaled by shot size.
+Each location has its own colour grade with sun bloom, plus a vignette, film
+grain, motion-blurred whip pans and true cross-dissolves. Name cards, thought
+bubbles, sound-effect words, the scoreboard and the extruded 3D title spring
+in with physics similar to Framer Motion's.
+
+The player includes:
 
 - temp VO through browser speech synthesis, with a different pitch per character
 - synthesized SFX (record scratch, buzzer, clang, crickets, drumroll, cheers)
