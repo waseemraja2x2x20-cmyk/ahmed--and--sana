@@ -86,8 +86,9 @@ async function renderSegment(browser, from, to, file, progress) {
 }
 
 const work = mkdtempSync(resolve(tmpdir(), 'ep01-render-'));
-const browser = await chromium.launch();
+let browser = null;
 try {
+  browser = await chromium.launch();
   const probe = await browser.newPage();
   await probe.goto(page.href);
   const total = await probe.evaluate(() => window.ANIMATIC_TOTAL);
@@ -111,6 +112,6 @@ try {
   await ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', out]).done;
   console.log(`wrote ${out} (${total}s @ ${fps}fps, ${jobs} jobs)`);
 } finally {
-  await browser.close();
+  if (browser) await browser.close().catch(() => {});
   rmSync(work, { recursive: true, force: true });
 }
