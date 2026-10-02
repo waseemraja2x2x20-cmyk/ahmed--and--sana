@@ -694,7 +694,8 @@ function scoreAt(t){let cur=null;for(const s of SHOTS){if(!s.score)continue;for(
   if(t<SHOTS.find(s=>s.id==='04-05').start||t>=SHOTS.find(s=>s.id==='06-05').start)return null;return cur;}
 
 const SPEAKER={A:'AHMED',S:'SANA',J:'JUDGE',F1:'FRIEND 1',F2:'FRIEND 2',H:'HOST',VO:'NARRATOR',Both:'BOTH',Crowd:'CROWD'};
-const fmt=t=>{const m=Math.floor(t/60),s=(t%60);return String(m).padStart(2,'0')+':'+s.toFixed(1).padStart(4,'0');};
+// Round to tenths first so 59.95s shows as 01:00.0, never 00:60.0.
+const fmt=t=>{const d=Math.round(t*10),m=Math.floor(d/600),s=(d%600)/10;return String(m).padStart(2,'0')+':'+s.toFixed(1).padStart(4,'0');};
 
 /* ============================================================
    CINEMATIC PIPELINE — scope bars, depth of field, multiplane

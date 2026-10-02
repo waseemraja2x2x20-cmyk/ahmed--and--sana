@@ -4,7 +4,7 @@
 // Requires Playwright (Chromium) and ffmpeg on PATH. Output goes to exports/previews/
 // (the project's preview location), which is not tracked by git.
 import { spawn } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { availableParallelism, tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -37,7 +37,12 @@ const fps = intOpt('--fps', 24, 1, 120);
 const jobs = intOpt('--jobs', Math.min(4, availableParallelism()), 1, 32);
 const hud = !args.includes('--no-hud');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const out = resolve(root, opt('--out', 'exports/previews/EP01-rough-animatic.mp4'));
+const outArg = opt('--out', 'exports/previews/EP01-rough-animatic.mp4');
+if (typeof outArg !== 'string' || outArg === '' || outArg.startsWith('--') || !outArg.endsWith('.mp4')) {
+  console.error(`--out must be a path ending in .mp4 (got ${JSON.stringify(outArg)})`);
+  process.exit(2);
+}
+const out = resolve(root, outArg);
 const page = pathToFileURL(resolve(root, 'animation/animatic/EP01-rough-animatic.html'));
 page.search = hud ? '?render&hud=1' : '?render';
 mkdirSync(dirname(out), { recursive: true });
@@ -109,7 +114,16 @@ try {
   await Promise.all(segs.map((sg) => renderSegment(browser, sg.from, sg.to, sg.file, progress)));
   const list = resolve(work, 'list.txt');
   writeFileSync(list, segs.map((sg) => `file '${sg.file}'`).join('\n'));
-  await ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', out]).done;
+  // Mux to a sibling staging file and rename only on success, so a failed run never
+  // replaces an existing good preview with a partial MP4.
+  const staged = `${out}.partial-${process.pid}.mp4`;
+  try {
+    await ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', staged]).done;
+    renameSync(staged, out);
+  } catch (e) {
+    rmSync(staged, { force: true });
+    throw e;
+  }
   console.log(`wrote ${out} (${total}s @ ${fps}fps, ${jobs} jobs)`);
 } finally {
   if (browser) await browser.close().catch(() => {});
