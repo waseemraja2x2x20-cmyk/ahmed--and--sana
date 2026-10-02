@@ -36,7 +36,8 @@ label.tog{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:1
 .scrub{position:relative;margin:6px 0 18px}
 .scrub input{width:100%;accent-color:var(--accent)}
 .marks{position:relative;height:16px}
-.marks span{position:absolute;top:0;transform:translateX(-50%);font-size:10px;color:var(--accent2);cursor:pointer;white-space:nowrap}
+.marks button{position:absolute;top:0;transform:translateX(-50%);font-size:10px;line-height:1;color:var(--accent2);cursor:pointer;white-space:nowrap;background:none;border:0;padding:2px 3px;border-radius:4px}
+.marks button:focus-visible{outline:2px solid var(--accent)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:14px}
 .panel h2{font-size:15px;margin:0 0 8px}
 .shots{max-height:420px;overflow:auto}
@@ -616,7 +617,7 @@ const SHOTS=[
 {sc:'SC11',id:'11-10',d:4,bg:'rooftopCU',cam:'cuA',silent:true,note:'ADJ5 — 2s ABSOLUTE SILENCE, no joke. Good Heart beat.',
  A:(tl)=>({expr:'soft',look:[4,1]})},
 {sc:'SC11',id:'11-11',d:4.5,bg:'rooftopCU',cam:'cuA',note:'Sana laugh @04:31',
- A:(tl)=>({expr:tl<3?'smirk':'happy'}),lines:[['A',"Don't say things like that. You'll ruin my reputation.",0.2,2.5],['S','(laughs)',3.5,1.0]]},
+ A:(tl)=>({expr:tl<3?'smirk':'happy'}),lines:[['A',"Don't say things like that. You'll ruin my reputation.",0.2,2.5],['S','(laughs)',3.5,1.0]],sfx:[[3.5,'laugh','']]},
 {sc:'SC11',id:'11-12',d:4,bg:'rooftop',cam:'wide',note:'Sana walks away',
  A:(tl)=>({x:520,y:640,s:.62,expr:'soft',pose:'sit'}),S:(tl)=>tl<1.1?({x:720,y:640,s:.62,face:-1,expr:'smirk',pose:'stand',prop:'trophy'}):({x:720+(tl-1.1)*140,y:640,s:.62,expr:'smirk',pose:'walk',prop:'trophy'}),
  lines:[['S','Rematch tomorrow?',0.2,1.0]]},
@@ -800,12 +801,14 @@ function sfx(kind){
   if(kind==='swish'||kind==='scratch'||kind==='gasp'){const n=noise(ctx,0.6),f=ctx.createBiquadFilter();f.type='bandpass';f.Q.value=kind==='scratch'?8:1.2;f.frequency.setValueAtTime(kind==='scratch'?2400:3000,now);f.frequency.exponentialRampToValueAtTime(kind==='scratch'?300:800,now+0.45);n.connect(f);env(ctx,f,0.02,kind==='gasp'?0.6:0.4,kind==='gasp'?0.25:0.5);n.start();}
   if(kind==='crickets'){for(let k=0;k<6;k++){const o=ctx.createOscillator();o.frequency.value=4300;const g=env(ctx,o,0.01,0.12,0.08,now+k*0.33);o.start(now+k*0.33);o.stop(now+k*0.33+0.2);}}
   if(kind==='drumroll'){for(let k=0;k<36;k++){const n=noise(ctx,0.06),f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=900;n.connect(f);env(ctx,f,0.004,0.05,0.18+k*0.006,now+k*0.055);n.start(now+k*0.055);}}
+  if(kind==='laugh'){for(let k=0;k<5;k++){const t0=now+k*0.17,o=ctx.createOscillator(),f=ctx.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(330-k*14,t0);o.frequency.exponentialRampToValueAtTime(270-k*14,t0+0.12);f.type='bandpass';f.frequency.value=900;f.Q.value=2.2;o.connect(f);env(ctx,f,0.012,0.11,0.32,t0);o.start(t0);o.stop(t0+0.16);}}
   if(kind==='cheer'){const n=noise(ctx,4),f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=1200;f.Q.value=0.6;n.connect(f);env(ctx,f,1.5,2.4,0.35);n.start();}
 }
 const VOICE={A:{pitch:0.85,rate:0.95},S:{pitch:1.35,rate:1.1},J:{pitch:0.7,rate:0.95},F1:{pitch:1.6,rate:1.15},F2:{pitch:1.1,rate:1.15},H:{pitch:1.0,rate:1.0},VO:{pitch:0.9,rate:0.9},Both:{pitch:1.1,rate:1}};
 function speak(w,text,fl){
-  if(!opts.vo||!('speechSynthesis' in window)||text.startsWith('(')) return;
-  const u=new SpeechSynthesisUtterance(text.replace(/…/g,'...'));const v=VOICE[w]||VOICE.H;
+  const spoken=text.replace(/^\([^)]*\)\s*/,'').trim();
+  if(!opts.vo||!('speechSynthesis' in window)||!spoken) return;
+  const u=new SpeechSynthesisUtterance(spoken.replace(/…/g,'...'));const v=VOICE[w]||VOICE.H;
   u.pitch=v.pitch;u.rate=v.rate;u.volume=fl==='inner'?0.6:1;speechSynthesis.speak(u);
 }
 
@@ -853,10 +856,10 @@ if(!RENDER){
   $('prev').onclick=()=>{const i=shotAt(T);const s=SHOTS[i];setT(T-s.start>0.5?s.start:SHOTS[Math.max(0,i-1)].start,true);};
   $('next').onclick=()=>{const i=shotAt(T);setT(SHOTS[Math.min(SHOTS.length-1,i+1)].start,true);};
   $('scrub').oninput=e=>setT(e.target.value/1000*TOTAL,true);
-  for(const k of ['vo','sfx','hud','subs']) $(k).onchange=e=>{opts[k]=e.target.checked;if(k==='vo'&&!opts.vo)try{speechSynthesis.cancel();}catch(_){}draw();};
+  for(const k of ['vo','sfx','hud','subs']) $(k).onchange=e=>{opts[k]=e.target.checked;if(k==='vo'&&!opts.vo)try{speechSynthesis.cancel();}catch(_){}if(k==='sfx'&&!opts.sfx)silence();draw();};
   document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INPUT'&&e.target.type!=='range')return;if((e.code==='Space'||e.code==='Enter')&&(tag==='BUTTON'||tag==='TR'))return;if(e.code==='Space'){e.preventDefault();playing?pause():play();}if(e.code==='ArrowRight'){e.preventDefault();$('next').click();}if(e.code==='ArrowLeft'){e.preventDefault();$('prev').click();}});
-  $('marks').innerHTML=CHECKPOINTS.map(([n,t])=>`<span style="left:${t/TOTAL*100}%" title="Checkpoint ${n} @ ${fmt(t)}" data-t="${t}">▲${n}</span>`).join('');
-  $('marks').onclick=e=>{const t=e.target.dataset.t;if(t)setT(+t,true);};
+  $('marks').innerHTML=CHECKPOINTS.map(([n,t])=>`<button type="button" style="left:${t/TOTAL*100}%" title="Checkpoint ${n} @ ${fmt(t)}" aria-label="Jump to review checkpoint ${n} at ${fmt(t)}" data-t="${t}">▲${n}</button>`).join('');
+  $('marks').onclick=e=>{const b=e.target.closest('button');if(b)setT(+b.dataset.t,true);};
   $('list').innerHTML=SHOTS.map((s,i)=>`<tr data-i="${i}" tabindex="0" aria-label="Jump to shot ${s.id}"><td class="n"><b>${s.id}</b></td><td class="n">${fmt(s.start)}</td><td class="n">${s.d.toFixed(1)}s</td><td>${(s.lines||[]).map(l=>`<b>${SPEAKER[l[0]]||l[0]}:</b> ${esc(l[1])}`).join('<br>')||'<i>'+esc(s.note||'')+'</i>'}${s.lines&&s.note?`<br><span style="color:var(--muted)">${esc(s.note)}</span>`:''}</td><td class="n">${s.tr||'cut'}</td></tr>`).join('');
   $('list').onclick=e=>{const r=e.target.closest('tr');if(r)setT(SHOTS[+r.dataset.i].start+0.001,true);};
   $('list').onkeydown=e=>{const r=e.target.closest('tr');if(r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopPropagation();setT(SHOTS[+r.dataset.i].start+0.001,true);}};
