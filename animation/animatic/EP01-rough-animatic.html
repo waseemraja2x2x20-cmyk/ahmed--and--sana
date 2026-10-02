@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WANDERLAND EP01 Animatic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f2ea; --panel:#fffdf8; --ink:#1d1a24; --muted:#6c6573; --line:#e3dccf;
+  --accent:#e2557f; --accent2:#2f4a7a; --hl:#fde9ef;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15141b; --panel:#1e1d26; --ink:#f1edf6; --muted:#a39dae; --line:#33303e;
+    --accent:#f07aa0; --accent2:#9db6e8; --hl:#3a2532;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15141b; --panel:#1e1d26; --ink:#f1edf6; --muted:#a39dae; --line:#33303e;
+  --accent:#f07aa0; --accent2:#9db6e8; --hl:#3a2532;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:22px;margin:0 0 2px;letter-spacing:.02em}
+.sub{color:var(--muted);margin:0 0 14px;font-size:14px}
+.stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 4px}
+button{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;min-width:84px}
+label.tog{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:13px;cursor:pointer}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;margin-left:auto}
+.scrub{position:relative;margin:6px 0 18px}
+.scrub input{width:100%;accent-color:var(--accent)}
+.marks{position:relative;height:16px}
+.marks span{position:absolute;top:0;transform:translateX(-50%);font-size:10px;color:var(--accent2);cursor:pointer;white-space:nowrap}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:14px}
+.panel h2{font-size:15px;margin:0 0 8px}
+.shots{max-height:420px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-weight:600}
+tr.cur td{background:var(--hl)}
+tbody tr{cursor:pointer}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}
+.note{color:var(--muted);font-size:13px;margin:6px 0 0}
+body.render main{max-width:none;padding:0}
+body.render .stage{border-radius:0;box-shadow:none;width:1280px;height:720px}
+body.render .hide-r{display:none}
+@media (max-width:600px){ .time{margin-left:0;width:100%} th:nth-child(5),td:nth-child(5){display:none} }
+</style>
+</head>
+<body>
+<main>
+  <div class="hide-r">
+    <h1>WANDERLAND · EP01 — Rough Animatic</h1>
+    <p class="sub">Timed to <code>docs/EP01-TIMING-SHEET-v1.0.md</code>. Placeholder vector art of Ahmed &amp; Sana, temp VO through browser speech, synth SFX.</p>
+  </div>
+  <div class="stage" id="stage"><svg id="svg" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg"></svg></div>
+  <div class="hide-r">
+    <div class="controls">
+      <button class="primary" id="play">▶ Play</button>
+      <button id="prev">⏮ Shot</button>
+      <button id="next">Shot ⏭</button>
+      <label class="tog"><input type="checkbox" id="vo" checked> Temp VO</label>
+      <label class="tog"><input type="checkbox" id="sfx" checked> SFX</label>
+      <label class="tog"><input type="checkbox" id="hud" checked> Shot HUD</label>
+      <label class="tog"><input type="checkbox" id="subs" checked> Subtitles</label>
+      <span class="time" id="time">00:00.0 / 00:00.0</span>
+    </div>
+    <div class="scrub">
+      <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Timeline">
+      <div class="marks" id="marks"></div>
+    </div>
+    <div class="panel">
+      <h2>Shot list</h2>
+      <div class="shots"><table><thead><tr><th>Shot</th><th>Start</th><th>Dur</th><th>Dialogue / action</th><th>Out</th></tr></thead><tbody id="list"></tbody></table></div>
+      <p class="note">Keys: <b>Space</b> play/pause · <b>←/→</b> previous/next shot. Numbered marks on the timeline are the animatic review checkpoints from the timing sheet.</p>
+    </div>
+  </div>
+</main>
+<script>
+"use strict";
+/* ============================================================
+   PALETTE (from references/character-sheet.png swatches)
+   ============================================================ */
+const C={
+  line:'#2a1d18', skinA:'#f1b685', skinS:'#f6c39a', blush:'#f48aa0',
+  hairA:'#17151c', hoodie:'#1d2231', hoodieHi:'#2b3245', tee:'#f3efe6', jeans:'#3f679b', shoe:'#f7f5f0',
+  pack:'#283550', strap:'#7a4b2a',
+  hairS:'#3a2219', hairSHi:'#57352a', top:'#ef86a6', topHi:'#f6a3bd', pants:'#efe5d2', bag:'#9a5a2e', book:'#3b4f8f', gold:'#e3b04b',
+  mouth:'#7a2b33', navy:'#0f1830', pink:'#ef86a6', yellow:'#f6b73c', sky:'#a9c4e6', grey:'#8a8f99'
+};
+const R=Math.PI/180;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const ease=u=>u<0?0:u>1?1:u*u*(3-2*u);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+/* ============================================================
+   CHARACTER RIG — two-segment limbs, auto ground contact
+   ============================================================ */
+function limb(x,y,a1,a2,len,w,col,end){
+  const ex=x+Math.sin(a1*R)*len, ey=y+Math.cos(a1*R)*len;
+  const hx=ex+Math.sin((a1+a2)*R)*len, hy=ey+Math.cos((a1+a2)*R)*len;
+  const d=`M${x.toFixed(1)} ${y.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}L${hx.toFixed(1)} ${hy.toFixed(1)}`;
+  return {svg:`<path d="${d}" stroke="${C.line}" stroke-width="${w+5}" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="${d}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`+(end?end(hx,hy,a1+a2):''),hx,hy};
+}
+
+// pose -> [backArm a1,a2, frontArm a1,a2, backLeg a1,a2, frontLeg a1,a2]
+function poseAngles(pose,t){
+  const P={
+    stand:[8,4,-6,4,-3,0,3,0],
+    pockets:[14,-28,-14,28,-4,0,4,0],
+    point:[8,4,96,-6,-3,0,3,0],
+    cheer:[168,8,-168,-8,-6,0,6,0],
+    shrug:[40,-110,-40,110,-3,0,3,0],
+    carry:[70,20,70,20,-3,0,3,0],
+    chin:[8,4,22,190,-3,0,3,0],
+    cross:[38,-118,48,-120,-4,0,4,0],
+    book:[20,-120,30,-125,-3,0,3,0],
+    hold:[60,40,60,40,-3,0,3,0],
+    crouch:[30,20,40,20,30,-80,45,-90],
+    stuck:[150,30,-150,-30,-20,10,35,-20],
+    sit:[18,10,24,10,85,-85,95,-90],
+    wave:[8,4,150,30+Math.sin(t*10)*25,-3,0,3,0],
+    present:[8,4,70,60,-3,0,3,0],
+  };
+  if(pose==='walk'||pose==='run'||pose==='walkcarry'||pose==='walkbook'){
+    const run=pose==='run', sp=run?11:7, A=run?42:24, K=run?75:35;
+    const ph=t*sp;
+    const l1=Math.sin(ph)*A, l2=Math.sin(ph+Math.PI)*A;
+    const k1=-Math.max(0,Math.sin(ph+1.4))*K-4, k2=-Math.max(0,Math.sin(ph+Math.PI+1.4))*K-4;
+    let arms=[-l1*0.9,run?-60:-12,-l2*0.9,run?60:12];
+    if(pose==='walkcarry') arms=[70,20,70,20];
+    if(pose==='walkbook') arms=[20,-120,-l2*0.8,12];
+    return [arms[0],arms[1],arms[2],arms[3],l1,k1,l2,k2];
+  }
+  return P[pose]||P.stand;
+}
+
+function eyesSvg(o,ex,ey,expr,blink,look,isS){
+  let s='';
+  const big=expr==='wide'||expr==='panic';
+  const rx=big?8.5:7, ry=big?11:9.5, pr=big?3.6:4.6;
+  for(const dx of [0,30]){
+    const x=ex+dx, y=ey;
+    if(blink||expr==='happy'||expr==='laugh'){
+      s+=`<path d="M${x-7} ${y+1}Q${x} ${y-8} ${x+7} ${y+1}" stroke="${C.line}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      continue;
+    }
+    s+=`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#fff" stroke="${C.line}" stroke-width="2"/>`;
+    s+=`<circle cx="${x+look[0]}" cy="${y+look[1]}" r="${pr}" fill="${C.line}"/><circle cx="${x+look[0]+1.6}" cy="${y+look[1]-1.8}" r="1.3" fill="#fff"/>`;
+    if(expr==='annoyed'||expr==='smug'){
+      s+=`<path d="M${x-rx-1} ${y-ry-2}L${x+rx+1} ${y-ry-2}L${x+rx+1} ${y-1}Q${x} ${y-3} ${x-rx-1} ${y-1}Z" fill="${isS?C.skinS:C.skinA}"/><path d="M${x-rx} ${y-1}Q${x} ${y-3} ${x+rx} ${y-1}" stroke="${C.line}" stroke-width="2.4" fill="none"/>`;
+    }
+    if(isS) s+=`<path d="M${x+rx-1} ${y-ry+3}l6 -5M${x+rx-3} ${y-ry+1}l4 -6" stroke="${C.line}" stroke-width="2" stroke-linecap="round"/>`;
+  }
+  return s;
+}
+function browsSvg(ex,ey,expr,t){
+  // [L outer, L inner, R inner, R outer] y offsets (negative = up)
+  const B={neutral:[0,0,0,0],happy:[-3,-3,-3,-3],laugh:[-3,-3,-3,-3],smirk:[0,0,-5,-8],smug:[0,2,-4,-7],wide:[-9,-10,-10,-9],
+    annoyed:[-2,5,5,-2],panic:[2,-9,-9,2],think:[0,0,-6-Math.abs(Math.sin(t*4))*4,-9],soft:[1,-3,-3,1]};
+  const b=B[expr]||B.neutral, y=ey-16;
+  return `<path d="M${ex-9} ${y+b[0]}L${ex+7} ${y+b[1]}M${ex+23} ${y+b[2]}L${ex+39} ${y+b[3]}" stroke="${C.line}" stroke-width="4" stroke-linecap="round"/>`;
+}
+function mouthSvg(mx,my,expr,talk,t){
+  if(talk){
+    const o=2+8*Math.abs(Math.sin(t*15)*Math.sin(t*5.7+1.3));
+    return `<ellipse cx="${mx}" cy="${my+o/3}" rx="${7+o/4}" ry="${o}" fill="${C.mouth}" stroke="${C.line}" stroke-width="2"/>`;
+  }
+  switch(expr){
+    case 'happy': case 'laugh': return `<path d="M${mx-12} ${my-2}Q${mx} ${my+16} ${mx+12} ${my-2}Z" fill="${C.mouth}" stroke="${C.line}" stroke-width="2.4" stroke-linejoin="round"/><path d="M${mx-9} ${my}L${mx+9} ${my}" stroke="#fff" stroke-width="3"/>`;
+    case 'smirk': case 'smug': return `<path d="M${mx-8} ${my+3}Q${mx+2} ${my+5} ${mx+11} ${my-5}" stroke="${C.line}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    case 'wide': return `<ellipse cx="${mx}" cy="${my+2}" rx="5" ry="7" fill="${C.mouth}" stroke="${C.line}" stroke-width="2"/>`;
+    case 'annoyed': return `<path d="M${mx-8} ${my+2}L${mx+8} ${my+1}" stroke="${C.line}" stroke-width="3" stroke-linecap="round"/>`;
+    case 'panic': return `<path d="M${mx-10} ${my+4}q3 -6 6 0t6 0t6 0v4h-18z" fill="${C.mouth}" stroke="${C.line}" stroke-width="2"/>`;
+    case 'think': return `<path d="M${mx-6} ${my+3}Q${mx} ${my+1} ${mx+9} ${my+4}" stroke="${C.line}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    case 'soft': return `<path d="M${mx-8} ${my}Q${mx} ${my+7} ${mx+8} ${my}" stroke="${C.line}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    default: return `<path d="M${mx-8} ${my}Q${mx} ${my+5} ${mx+8} ${my-1}" stroke="${C.line}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  }
+}
+
+/**
+ * Draw a character. who: 'A' (Ahmed) | 'S' (Sana)
+ * o: {x,y,s,face,expr,pose,talk,look:[dx,dy],prop,mud,seed}
+ */
+function drawChar(who,o,t){
+  const isS=who==='S';
+  const face=o.face||1, s=(o.s||1)*(isS?0.96:1);
+  const pose=o.pose||'stand', expr=o.expr||'neutral';
+  const ang=poseAngles(pose,t+(o.seed||0));
+  const legLen=isS?96:95, hipY=-200;
+  // auto ground: lowest foot sits at y=-8
+  const f1=limb(-14,hipY,ang[4],ang[5],legLen,0,'#000'), f2=limb(14,hipY,ang[6],ang[7],legLen,0,'#000');
+  let off=-8-Math.max(f1.hy,f2.hy);
+  if(pose==='sit') off=0;
+  const bob=(pose==='walk'||pose==='walkcarry'||pose==='walkbook')?Math.abs(Math.sin((t+(o.seed||0))*7))*-4:0;
+  const hip=hipY+off, sh=-335+off+bob, hd=sh-58;
+  const skin=isS?C.skinS:C.skinA;
+  const shoe=(x,y)=>`<ellipse cx="${x+9}" cy="${y+6}" rx="${isS?18:21}" ry="10" fill="${C.shoe}" stroke="${C.line}" stroke-width="3"/>`;
+  const hand=(x,y)=>`<circle cx="${x}" cy="${y}" r="${isS?11:12.5}" fill="${skin}" stroke="${C.line}" stroke-width="3"/>`;
+  let g='';
+  // --- behind-body layers
+  if(isS){
+    g+=`<path d="M-50 ${hd-18}Q-66 ${hd+110} -72 ${sh+150}Q0 ${sh+168} 64 ${sh+148}Q56 ${hd+100} 48 ${hd-20}Q0 ${hd-84} -50 ${hd-18}Z" fill="${C.hairS}" stroke="${C.line}" stroke-width="3"/>`;
+    g+=`<rect x="-82" y="${hip-30}" width="40" height="46" rx="8" fill="${C.bag}" stroke="${C.line}" stroke-width="3"/>`;
+  }else{
+    g+=`<rect x="-84" y="${sh+8}" width="44" height="112" rx="16" fill="${C.pack}" stroke="${C.line}" stroke-width="3"/>`;
+  }
+  // back arm
+  const ba=limb(-42,sh+12,ang[0],ang[1],isS?58:62,isS?20:24,isS?C.top:C.hoodie,(x,y)=>hand(x,y));
+  g+=ba.svg;
+  // legs
+  const legCol=isS?C.pants:C.jeans, legW=isS?34:27;
+  const L1=limb(-14,hip,ang[4],ang[5],legLen,legW,legCol,(x,y)=>shoe(x,y));
+  const L2=limb(14,hip,ang[6],ang[7],legLen,legW,legCol,(x,y)=>shoe(x,y));
+  g+=L1.svg+L2.svg;
+  if(o.mud) g+=`<path d="M-40 ${hip+120}q20 -14 40 0t44 2v60h-84z" fill="#6b4a2f" opacity=".85"/>`;
+  // torso
+  if(isS){
+    g+=`<path d="M-44 ${sh}Q-50 ${sh+70} -42 ${hip+6}L42 ${hip+6}Q50 ${sh+70} 44 ${sh}Q0 ${sh-12} -44 ${sh}Z" fill="${C.top}" stroke="${C.line}" stroke-width="3"/>`;
+    g+=`<path d="M-12 ${sh-4}L0 ${sh+26}L12 ${sh-4}Z" fill="${skin}" stroke="${C.line}" stroke-width="2"/>`;
+    g+=`<rect x="-42" y="${hip-4}" width="84" height="10" fill="${C.bag}" stroke="${C.line}" stroke-width="2"/>`;
+    g+=`<path d="M34 ${sh+2}L-60 ${hip-28}" stroke="${C.bag}" stroke-width="6"/>`;
+  }else{
+    g+=`<ellipse cx="-8" cy="${sh-2}" rx="36" ry="14" fill="${C.hoodieHi}" stroke="${C.line}" stroke-width="3"/>`;
+    g+=`<path d="M-48 ${sh}Q-56 ${sh+70} -46 ${hip+8}L46 ${hip+8}Q56 ${sh+70} 48 ${sh}Q0 ${sh-14} -48 ${sh}Z" fill="${C.hoodie}" stroke="${C.line}" stroke-width="3"/>`;
+    g+=`<path d="M-15 ${sh-4}L15 ${sh-4}L17 ${hip+6}L-17 ${hip+6}Z" fill="${C.tee}" stroke="${C.line}" stroke-width="2"/>`;
+    g+=`<path d="M-28 ${sh+2}L-30 ${sh+80}" stroke="${C.strap}" stroke-width="7"/>`;
+  }
+  // head
+  g+=`<rect x="-10" y="${sh-26}" width="20" height="28" fill="${skin}" stroke="${C.line}" stroke-width="3"/>`;
+  g+=`<ellipse cx="-36" cy="${hd+4}" rx="8" ry="11" fill="${skin}" stroke="${C.line}" stroke-width="3"/>`;
+  g+=`<ellipse cx="0" cy="${hd}" rx="${isS?39:41}" ry="${isS?46:48}" fill="${skin}" stroke="${C.line}" stroke-width="3"/>`;
+  if(isS) g+=`<circle cx="-37" cy="${hd+18}" r="4" fill="none" stroke="${C.gold}" stroke-width="2.5"/>`;
+  // face
+  const blink=((t+(o.seed||0)*1.7)%3.6)<0.13;
+  const look=o.look||[2,0];
+  g+=eyesSvg(o,-6,hd+2,expr,blink,look,isS);
+  g+=browsSvg(-6,hd+2,expr,t);
+  g+=`<path d="M15 ${hd+12}q5 6 -1 8" stroke="${C.line}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if(isS||expr==='soft'||expr==='happy'||expr==='laugh') g+=`<ellipse cx="-14" cy="${hd+22}" rx="8" ry="4.5" fill="${C.blush}" opacity=".45"/><ellipse cx="34" cy="${hd+22}" rx="7" ry="4.5" fill="${C.blush}" opacity=".45"/>`;
+  g+=mouthSvg(9,hd+30,expr,o.talk,t);
+  // hair front
+  if(isS){
+    g+=`<path d="M-46 ${hd+34}Q-54 ${hd-52} 4 ${hd-54}Q52 ${hd-50} 46 ${hd+12}Q38 ${hd-24} 18 ${hd-30}Q-2 ${hd-20} -16 ${hd-36}Q-30 ${hd-10} -36 ${hd+42}Z" fill="${C.hairS}" stroke="${C.line}" stroke-width="3"/>`;
+    g+=`<path d="M40 ${hd-6}Q56 ${hd+60} 46 ${sh+70}L34 ${sh+66}Q42 ${hd+50} 34 ${hd+6}Z" fill="${C.hairS}" stroke="${C.line}" stroke-width="3"/>`;
+    g+=`<path d="M-6 ${hd-44}Q14 ${hd-40} 28 ${hd-26}" stroke="${C.hairSHi}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  }else{
+    g+=`<path d="M-46 ${hd+8}Q-56 ${hd-40} -22 ${hd-58}Q-6 ${hd-78} 16 ${hd-62}Q36 ${hd-80} 48 ${hd-52}Q64 ${hd-46} 52 ${hd-20}Q48 ${hd-30} 38 ${hd-30}Q42 ${hd-10} 30 ${hd-6}Q24 ${hd-26} 10 ${hd-30}Q6 ${hd-12} -6 ${hd-16}Q-8 ${hd-30} -22 ${hd-26}Q-30 ${hd-8} -38 ${hd+16}Z" fill="${C.hairA}" stroke="${C.line}" stroke-width="3" stroke-linejoin="round"/>`;
+  }
+  // props held in front
+  const fa=limb(42,sh+12,ang[2],ang[3],isS?58:62,isS?20:24,isS?C.top:C.hoodie,(x,y)=>hand(x,y));
+  let prop='';
+  if(o.prop==='book'||pose==='book'||pose==='walkbook') prop=`<rect x="-4" y="${sh+30}" width="42" height="58" rx="4" fill="${C.book}" stroke="${C.line}" stroke-width="3" transform="rotate(-8 17 ${sh+59})"/>`;
+  if(o.prop==='trophy') prop=trophy(fa.hx,fa.hy-30,0.9);
+  if(o.prop==='blueprint') prop=`<g transform="translate(${fa.hx-10} ${fa.hy-70}) rotate(-6)"><rect width="90" height="66" fill="#3d6fb6" stroke="${C.line}" stroke-width="3"/><path d="M10 14h50M10 26h70M10 38h40M60 34h20v20h-20z" stroke="#cfe0ff" stroke-width="2" fill="none"/></g>`;
+  if(o.prop==='wires') prop=`<path d="M${fa.hx} ${fa.hy}c20 -30 -10 -40 20 -60s-20 -10 10 -40" stroke="#e24a3b" stroke-width="4" fill="none"/><path d="M${fa.hx} ${fa.hy}c-10 -30 30 -30 10 -60" stroke="#f2c230" stroke-width="4" fill="none"/>`;
+  if(pose==='book'||pose==='walkbook'||o.prop==='book') g+=prop+fa.svg; else g+=fa.svg+prop;
+  if(o.fence) g+=`<g stroke="#9aa3ad" stroke-width="3" fill="none" opacity=".9"><path d="M-70 ${hd+40}l140 140M-70 ${hd+180}l140 -140M-40 ${hd+20}l100 100"/></g>`;
+  const y=o.y, x=o.x;
+  return `<g transform="translate(${x} ${y}) scale(${s*face} ${s})">${g}</g>`;
+}
+
+/* ============================================================
+   PROPS / EXTRAS
+   ============================================================ */
+function trophy(x,y,s){return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-26 -40h52q0 40 -26 48q-26 -8 -26 -48z" fill="${C.gold}" stroke="${C.line}" stroke-width="3"/><path d="M-26 -34q-18 0 -14 14q4 10 16 8M26 -34q18 0 14 14q-4 10 -16 8" stroke="${C.line}" stroke-width="3" fill="none"/><rect x="-6" y="8" width="12" height="16" fill="${C.gold}" stroke="${C.line}" stroke-width="3"/><rect x="-20" y="22" width="40" height="12" rx="3" fill="#6b4a2f" stroke="${C.line}" stroke-width="3"/></g>`;}
+function bean(x,y,s,col,opt={}){
+  const t=opt.t||0, bounce=opt.bounce?Math.abs(Math.sin(t*opt.bounce))*-12:0;
+  let m=opt.talk?`<ellipse cx="6" cy="-112" rx="8" ry="${2+6*Math.abs(Math.sin(t*14))}" fill="${C.mouth}" stroke="${C.line}" stroke-width="2"/>`:`<path d="M-2 -112q8 6 16 0" stroke="${C.line}" stroke-width="3" fill="none"/>`;
+  if(opt.mouth==='o') m=`<ellipse cx="6" cy="-108" rx="6" ry="9" fill="${C.mouth}" stroke="${C.line}" stroke-width="2"/>`;
+  if(opt.mouth==='sad') m=`<path d="M-2 -106q8 -7 16 0" stroke="${C.line}" stroke-width="3" fill="none"/>`;
+  let extra='';
+  if(opt.popcorn) extra=`<g transform="translate(26 -70)"><path d="M-14 0h28l-5 34h-18z" fill="#e8453c" stroke="${C.line}" stroke-width="3"/><path d="M-6 0v34M6 0v34" stroke="#fff" stroke-width="4"/><circle cx="-8" cy="-4" r="7" fill="#fff6d8" stroke="${C.line}" stroke-width="2"/><circle cx="4" cy="-8" r="7" fill="#fff6d8" stroke="${C.line}" stroke-width="2"/><circle cx="12" cy="-2" r="6" fill="#fff6d8" stroke="${C.line}" stroke-width="2"/></g>`;
+  if(opt.flag) extra=`<path d="M36 -100v-80" stroke="${C.line}" stroke-width="5"/><path d="M36 -180h44l-10 14l10 14h-44z" fill="${opt.flagUp?'#3fb36b':'#e8453c'}" stroke="${C.line}" stroke-width="3"/>`;
+  if(opt.mic) extra=`<path d="M30 -90l14 -30" stroke="${C.line}" stroke-width="5"/><circle cx="46" cy="-124" r="9" fill="#555" stroke="${C.line}" stroke-width="3"/>`;
+  if(opt.tear) extra+=`<path d="M-14 -118q-4 10 0 14q4 -4 0 -14z" fill="#7fc3f0"/>`;
+  return `<g transform="translate(${x} ${y+bounce}) scale(${s})"><path d="M-40 0q-6 -150 40 -160q46 10 40 160z" fill="${col}" stroke="${C.line}" stroke-width="3"/><circle cx="-8" cy="-128" r="5" fill="${C.line}"/><circle cx="16" cy="-128" r="5" fill="${C.line}"/>${m}${extra}</g>`;
+}
+function box(x,y,s,state,t){
+  // state: 'off' | 'on' | 'blink' | 'smoke' | 'broken' | 'fixed'
+  let lights='';
+  const cols=['#f6d14a','#5fd38a','#5fb7f2','#f27a5f'];
+  for(let i=0;i<4;i++){
+    let on=state==='on'||state==='fixed'||state==='smoke';
+    if(state==='blink') on=Math.sin(t*12+i)>0;
+    lights+=`<circle cx="${-45+i*30}" cy="-70" r="10" fill="${on?cols[i]:'#555'}" stroke="${C.line}" stroke-width="3"/>`+(on?`<circle cx="${-45+i*30}" cy="-70" r="18" fill="${cols[i]}" opacity=".25"/>`:'');
+  }
+  if(state==='broken') return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-80 0l10 -50l50 -10l40 20l60 -10l0 50z" fill="#b98a55" stroke="${C.line}" stroke-width="3"/><path d="M-30 -40c10 -30 30 10 50 -30" stroke="#e24a3b" stroke-width="4" fill="none"/><circle cx="30" cy="-30" r="9" fill="#555" stroke="${C.line}" stroke-width="3"/></g>`;
+  let smoke='';
+  if(state==='smoke'){for(let i=0;i<5;i++){const p=((t*0.8+i*0.2)%1);smoke+=`<circle cx="${50+Math.sin(p*9+i)*12}" cy="${-110-p*120}" r="${10+p*26}" fill="#9a9a9a" opacity="${(1-p)*0.6}"/>`;}}
+  let brace=state==='fixed'?`<path d="M-80 -20L80 -100M-80 -100L80 -20" stroke="#3d6fb6" stroke-width="5"/><path d="M-60 -110q40 -40 120 0" stroke="#e24a3b" stroke-width="4" fill="none" stroke-dasharray="8 6"/>`:'';
+  return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-90" y="-120" width="180" height="120" rx="10" fill="#c99a62" stroke="${C.line}" stroke-width="3"/>${brace}${lights}<path d="M60 -120c20 -40 -10 -40 10 -70" stroke="#e24a3b" stroke-width="4" fill="none"/>${smoke}</g>`;
+}
+function bubble(x,y,w,h,text,size=24){
+  return `<g transform="translate(${x} ${y})"><circle cx="-${w/2-10}" cy="${h/2+26}" r="7" fill="#fff" stroke="${C.line}" stroke-width="3"/><circle cx="-${w/2-24}" cy="${h/2+10}" r="11" fill="#fff" stroke="${C.line}" stroke-width="3"/><rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#fff" stroke="${C.line}" stroke-width="3"/><text x="0" y="${size/3}" text-anchor="middle" font-family="Patrick Hand, Comic Sans MS, Chalkboard SE, sans-serif" font-size="${size}" fill="${C.line}">${esc(text)}</text></g>`;
+}
+function hand_text(x,y,text,size,col,rot=0,anchor='middle',weight=700){
+  return `<text x="${x}" y="${y}" transform="rotate(${rot} ${x} ${y})" text-anchor="${anchor}" font-family="Patrick Hand, Comic Sans MS, Chalkboard SE, sans-serif" font-weight="${weight}" font-size="${size}" fill="${col}">${esc(text)}</text>`;
+}
+function ball(x,y,r=22){return `<g transform="translate(${x} ${y})"><circle r="${r}" fill="#ef7d2d" stroke="${C.line}" stroke-width="3"/><path d="M${-r} 0h${2*r}M0 ${-r}v${2*r}M${-r*.7} ${-r*.7}q${r*.7} ${r*.7} 0 ${r*1.4}M${r*.7} ${-r*.7}q${-r*.7} ${r*.7} 0 ${r*1.4}" stroke="${C.line}" stroke-width="2" fill="none"/></g>`;}
+
+/* ============================================================
+   BACKGROUNDS
+   ============================================================ */
+function skyline(y,col,seed=1,pan=0){
+  let s='',x=-200+(pan%400);
+  let r=seed;
+  while(x<1500){r=(r*9301+49297)%233280;const w=60+(r%90),h=60+(r%170);s+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h+400}" fill="${col}"/>`;if(r%5===0)s+=`<path d="M${x+w/2-24} ${y-h}q24 -50 48 0z" fill="${col}"/>`;x+=w+6;}
+  return s;
+}
+function trees(y,pan=0){let s='';for(let i=-2;i<14;i++){const x=i*120+((pan*0.6)%120);s+=`<rect x="${x-6}" y="${y-40}" width="12" height="44" fill="#7b5a3c"/><circle cx="${x}" cy="${y-60}" r="40" fill="#7fb36a"/><circle cx="${x+26}" cy="${y-46}" r="28" fill="#6aa159"/>`;}return s;}
+const BG={
+  black:()=>`<rect width="1280" height="720" fill="#000"/>`,
+  title:(t)=>`<defs><radialGradient id="tg" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#2f3f74"/><stop offset="1" stop-color="#0f1830"/></radialGradient></defs><rect width="1280" height="720" fill="url(#tg)"/>`+stars(t),
+  sky:(t)=>`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9cc1ea"/><stop offset="1" stop-color="#f6efe0"/></linearGradient></defs><rect width="1280" height="720" fill="url(#sk)"/>`+clouds(t)+skyline(560,'#c9cdd8',3)+skyline(600,'#b3a49a',7)+trees(640)+`<rect y="630" width="1280" height="90" fill="#efe5d2"/>`,
+  campus:(t,pan=0)=>`<rect width="1280" height="720" fill="#a9cbee"/>`+clouds(t)+skyline(470,'#d7c7b8',5,pan*0.3)+`<g>${campusBuildings(pan)}</g>`+trees(560,pan)+`<rect y="550" width="1280" height="170" fill="#8cc06f"/><path d="M0 640 Q640 590 1280 640 L1280 720 L0 720Z" fill="#e7d9bd"/>`,
+  board:(t)=>BG.campus(t)+`<g transform="translate(980 520)"><rect x="-6" y="-40" width="12" height="80" fill="#7b5a3c"/><rect x="-120" y="-240" width="240" height="200" rx="8" fill="#b88a58" stroke="${C.line}" stroke-width="4"/><rect x="-90" y="-220" width="180" height="150" fill="#fff4cf" stroke="${C.line}" stroke-width="3"/>${hand_text(0,-180,'ULTIMATE',24,'#e2557f')}${hand_text(0,-150,'CHALLENGE',24,'#e2557f')}${hand_text(0,-110,'sign up!',18,C.navy)}</g>`,
+  poster:(t)=>`<rect width="1280" height="720" fill="#b88a58"/><rect x="250" y="40" width="780" height="640" fill="#fff4cf" stroke="${C.line}" stroke-width="6" transform="rotate(-1.5 640 360)"/><circle cx="640" cy="70" r="16" fill="#e2557f" stroke="${C.line}" stroke-width="3"/>`+hand_text(640,230,'ULTIMATE',110,'#e2557f',-2)+hand_text(640,350,'CHALLENGE',110,'#e2557f',-2)+hand_text(640,450,'Race · Hoops · Quiz · Build',38,C.navy,-2)+hand_text(640,540,'One Campus Champion.',44,C.navy,-2)+trophy(900,620,1.1),
+  race:(t,pan=0)=>BG.campus(t,pan)+`<g>${[...Array(10)].map((_,i)=>{const x=((i*180-pan*1.2)%1800+1800)%1800-200;return `<rect x="${x}" y="600" width="70" height="10" fill="#fff" opacity=".7"/>`}).join('')}</g>`,
+  fence:(t)=>`<rect width="1280" height="720" fill="#a9cbee"/>`+clouds(t)+trees(520)+`<rect y="500" width="1280" height="220" fill="#8cc06f"/><ellipse cx="640" cy="660" rx="520" ry="70" fill="#6b4a2f"/><ellipse cx="560" cy="650" rx="200" ry="26" fill="#83603f"/>`+fenceSvg(),
+  finish:(t)=>BG.campus(t)+`<path d="M1000 640V300M1240 640V300" stroke="${C.line}" stroke-width="8"/><rect x="1000" y="300" width="240" height="50" fill="#fff" stroke="${C.line}" stroke-width="3"/>`+hand_text(1120,336,'FINISH',32,'#e2557f'),
+  court:(t)=>`<rect width="1280" height="720" fill="#bfd8f1"/>`+skyline(420,'#d3d7e2',11)+`<rect y="420" width="1280" height="300" fill="#d9894f"/><path d="M0 520H1280M640 420V720" stroke="#fff" stroke-width="4" opacity=".7"/><ellipse cx="640" cy="600" rx="140" ry="40" stroke="#fff" stroke-width="4" fill="none" opacity=".7"/><g transform="translate(1100 0)"><rect x="-6" y="200" width="12" height="400" fill="#555"/><rect x="-80" y="140" width="120" height="90" fill="#fff" stroke="${C.line}" stroke-width="4"/><rect x="-46" y="180" width="40" height="30" fill="none" stroke="#e8453c" stroke-width="3"/><ellipse cx="-60" cy="232" rx="34" ry="8" fill="none" stroke="#e8453c" stroke-width="5"/><path d="M-90 232l10 40h40l10 -40" stroke="#fff" stroke-width="2" fill="none"/></g><g transform="translate(160 640)"><path d="M-40 0l-8 -110h96l-8 110z" fill="#7d8792" stroke="${C.line}" stroke-width="4"/>${hand_text(0,-50,'BIN',22,'#fff')}</g>`,
+  quiz:(t)=>`<rect width="1280" height="720" fill="#2f2350"/>`+spot(380)+spot(900)+`<rect y="560" width="1280" height="160" fill="#4b3a7a"/>`+podium(400,'#3d6fb6')+podium(880,'#e2557f')+hand_text(640,90,'QUIZ BOWL',56,'#f6d14a'),
+  puzzle:(t)=>`<rect width="1280" height="720" fill="#efe1c6"/><rect y="520" width="1280" height="200" fill="#9b6b44"/>`+[...Array(14)].map((_,i)=>`<rect x="${380+(i%7)*76}" y="${540+Math.floor(i/7)*60}" width="68" height="52" rx="6" fill="${['#f6b73c','#5fb7f2','#ef86a6','#7fd38a'][i%4]}" stroke="${C.line}" stroke-width="3"/>`).join(''),
+  present:(t)=>`<rect width="1280" height="720" fill="#e9e2f2"/><rect x="380" y="70" width="520" height="300" fill="#fff" stroke="${C.line}" stroke-width="5"/><rect y="560" width="1280" height="160" fill="#8a6a9e"/>`,
+  workshop:(t)=>`<rect width="1280" height="720" fill="#d8cbb6"/><rect y="0" width="1280" height="60" fill="#bfae95"/>`+[...Array(6)].map((_,i)=>`<path d="M${120+i*210} 120h60v40h-60z" fill="#a08566" stroke="${C.line}" stroke-width="3"/>`).join('')+`<rect x="80" y="180" width="300" height="200" fill="#c3b398" stroke="${C.line}" stroke-width="3"/><path d="M120 220h40M200 220v60M260 240l30 30M120 300h200" stroke="${C.line}" stroke-width="5"/><rect y="560" width="1280" height="160" fill="#8a6a4c"/><rect x="300" y="540" width="680" height="30" fill="#6e5038" stroke="${C.line}" stroke-width="3"/>`,
+  stage:(t,_p,opt={})=>`<rect width="1280" height="720" fill="#24264a"/><path d="M0 0h200v720H0zM1080 0h200v720h-200z" fill="#8f2440"/><path d="M200 0q20 360 0 720M1080 0q-20 360 0 720" stroke="#5e1428" stroke-width="10" fill="none"/>`+spot(640,0.25)+`<rect y="560" width="1280" height="160" fill="#5a3b2a"/><rect x="0" y="540" width="1280" height="24" fill="#7a5238"/>`+hand_text(640,90,'CAMPUS CHAMPION — FINALS',44,'#f6d14a')+crowd(t,opt.cheer),
+  rooftop:(t)=>`<defs><linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3a78"/><stop offset=".55" stop-color="#d77ea0"/><stop offset="1" stop-color="#f6b57a"/></linearGradient></defs><rect width="1280" height="720" fill="url(#dusk)"/>`+stars(t,0.35)+skyline(560,'#4b3f66',13)+skyline(600,'#33284a',21)+windows(t)+`<rect y="560" width="1280" height="160" fill="#4a4258"/><rect y="548" width="1280" height="22" fill="#6b6278"/><g fill="#7a5a44" stroke="${C.line}" stroke-width="3"><rect x="470" y="515" width="320" height="18" rx="4"/><rect x="490" y="533" width="14" height="74"/><rect x="756" y="533" width="14" height="74"/></g>`,
+  rooftopCU:(t)=>`<defs><linearGradient id="dusk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4384"/><stop offset="1" stop-color="#f0a789"/></linearGradient></defs><rect width="1280" height="720" fill="url(#dusk2)"/>`+skyline(700,'#3a2f55',13),
+  endcard:(t)=>BG.title(t),
+};
+function clouds(t){let s='';for(let i=0;i<5;i++){const x=((i*330+t*12)%1600)-160,y=70+(i%3)*50;s+=`<g fill="#fff" opacity=".85"><ellipse cx="${x}" cy="${y}" rx="70" ry="24"/><ellipse cx="${x+40}" cy="${y-14}" rx="44" ry="26"/><ellipse cx="${x-36}" cy="${y-6}" rx="34" ry="18"/></g>`;}return s;}
+function stars(t,op=0.9){let s='';for(let i=0;i<40;i++){const x=(i*157)%1280,y=(i*83)%380,a=op*(0.5+0.5*Math.sin(t*2+i));s+=`<circle cx="${x}" cy="${y}" r="${1+(i%3)*0.6}" fill="#fff" opacity="${a.toFixed(2)}"/>`;}return s;}
+function windows(t){let s='';for(let i=0;i<60;i++){const x=(i*97)%1260,y=470+(i*37)%110;s+=`<rect x="${x}" y="${y}" width="8" height="10" fill="#ffd98a" opacity="${(i%3?0.8:0.35)}"/>`;}return s;}
+function campusBuildings(pan){const off=-(pan*0.5)%900;let s='';for(let k=-1;k<3;k++){const b=off+k*900;s+=`<g transform="translate(${b} 0)"><rect x="80" y="330" width="320" height="230" fill="#e9c8a8" stroke="#b98a6a" stroke-width="3"/><path d="M60 330L240 260L420 330Z" fill="#c76a52"/><rect x="560" y="300" width="200" height="260" fill="#f0dcc0" stroke="#b98a6a" stroke-width="3"/><path d="M620 300q40 -90 80 0z" fill="#e8d2a8"/>${[...Array(8)].map((_,i)=>`<rect x="${110+(i%4)*72}" y="${360+Math.floor(i/4)*80}" width="36" height="46" fill="#9cc1ea"/>`).join('')}</g>`;}return s;}
+function fenceSvg(){let s='<g stroke="#8e98a3" stroke-width="3" fill="none">';for(let x=760;x<1280;x+=26){s+=`<path d="M${x} 300l26 26l-26 26l26 26l-26 26l26 26l-26 26l26 26l-26 26l26 26"/>`;}s+=`</g><path d="M760 290V570M1270 290V570" stroke="#666" stroke-width="10"/><rect x="560" y="360" width="130" height="60" fill="#fff4cf" stroke="${C.line}" stroke-width="3"/>`+hand_text(625,400,'SHORTCUT →',20,'#e2557f');return s;}
+function spot(x,op=0.18){return `<path d="M${x-30} 0L${x-200} 720H${x+200}L${x+30} 0Z" fill="#fff" opacity="${op}"/>`;}
+function podium(x,col){return `<g transform="translate(${x} 560)"><rect x="-90" y="-80" width="180" height="120" fill="${col}" stroke="${C.line}" stroke-width="4"/><circle cx="0" cy="-90" r="18" fill="#e8453c" stroke="${C.line}" stroke-width="3"/></g>`;}
+function crowd(t,cheer){let s='';const cols=['#6d5f8f','#7f6a5a','#4f6b84','#8a5a6e','#5d7a5c'];for(let i=0;i<16;i++){const x=40+i*82,b=cheer?Math.abs(Math.sin(t*9+i))*-22:0;s+=`<g transform="translate(${x} ${712+b})"><ellipse cx="0" cy="-40" rx="34" ry="42" fill="${cols[i%5]}" opacity=".95"/><circle cx="0" cy="-92" r="22" fill="${cols[(i+2)%5]}"/>${cheer?`<path d="M-26 -60l-18 -50M26 -60l18 -50" stroke="${cols[i%5]}" stroke-width="12" stroke-linecap="round"/>`:''}</g>`;}return s;}
+
+/* ============================================================
+   CAMERA PRESETS
+   ============================================================ */
+// cuA/cuS: close-up framing (head ≈ y 330). two: waist-up two-shot. wide: full figures.
+const CAM={
+  wide:{s:.72,y:650,A:440,S:840},
+  mid:{s:1.0,y:700,A:470,S:810},
+  two:{s:1.38,y:820,A:470,S:820},
+  cuA:{s:2.5,y:1300,A:640},
+  cuS:{s:2.55,y:1300,S:640},
+};
+
+/* ============================================================
+   SHOT LIST — durations/dialogue from EP01-TIMING-SHEET-v1.0
+   lines: [who, text, start(s), dur(s), flags]  who: A S J F1 F2 H VO Both Crowd
+   ============================================================ */
+const sm=(lo,hi,tl)=>ease((tl-lo)/(hi-lo));
+const SHOTS=[
+// ---------------- SC01
+{sc:'SC01',id:'01-01',d:4,bg:'title',fadeIn:1,tr:'cut',note:'Title: WANDERLAND',
+ post:(tl)=>`<g opacity="${ease(tl/1.2)*(tl>3?1-(tl-3):1)}">`+hand_text(640,330,'WANDERLAND',120,'#f6d14a',-2)+hand_text(640,410,'Episode 01 · "Same Trophy"',38,'#f1edf6')+`</g>`},
+{sc:'SC01',id:'01-02',d:8,bg:'sky',cam:'mid',note:'Ahmed intro — Smart / Lazy / Big Dreams',
+ A:(tl)=>({x:640,expr:tl>5?'smug':'neutral',pose:'pockets',look:[3,0]}),
+ lines:[['VO','Ahmed. Thinks a lot. Does… selectively.',0.4,5.4]],
+ post:(tl)=>nameCard('AHMED',['Smart','Lazy','Big Dreams','Overthinks','Good Heart'],tl,C.accent2||'#2f4a7a')},
+{sc:'SC01',id:'01-03',d:6,bg:'sky',cam:'cuA',note:'Overthinks montage — 2s per thought bubble',
+ A:(tl)=>({expr:'think',pose:'chin',look:[3,-4]}),
+ post:(tl)=>{const b=[['What if the bus is early?'],['Reply "ok" or "okay"…?'],['Is it lunch yet?']];const i=Math.min(2,Math.floor(tl/2));const p=ease((tl-i*2)/0.25);return `<g transform="translate(0 ${(1-p)*20})" opacity="${p}">`+bubble(960,170,430,90,b[i][0],30)+`</g>`;}},
+// ---------------- SC02
+{sc:'SC02',id:'02-01',d:8,bg:'sky',cam:'mid',note:'Sana intro — Confident / Caring / Funny / Independent',
+ S:(tl)=>({x:640,expr:tl<4?'smirk':'happy',pose:'book',look:[2,0]}),
+ lines:[['VO','Sana. Has a plan. For everything.',0.4,4.6]],
+ post:(tl)=>nameCard('SANA',['Confident','Caring','Funny','Independent','Emotionally Smart'],tl,'#e2557f')},
+{sc:'SC02',id:'02-02',d:7,bg:'campus',cam:'mid',note:'Emotionally-smart beat — book prop, caring glance',
+ S:(tl)=>({x:520,face:1,expr:tl<2.5?'neutral':'soft',pose:tl<3.5?'book':'hold',prop:tl<3.5?'book':null,look:tl<1.5?[2,0]:[3,1]}),
+ pre:(tl)=>bean(900,700,1.5,'#7fa7c9',{mouth:tl<4.5?'sad':null,tear:tl<4.5})+(tl>3.5?`<g transform="translate(790 560) rotate(-10)"><rect width="42" height="58" rx="4" fill="${C.book}" stroke="${C.line}" stroke-width="3"/></g>`:'')},
+{sc:'SC02',id:'02-03',d:5,bg:'campus',pan:(tl)=>tl*160,cam:'mid',tr:'whip',note:'Independent walk — walk cycle',
+ S:(tl)=>({x:600,expr:'smirk',pose:'walkbook'})},
+// ---------------- SC03
+{sc:'SC03',id:'03-01',d:3,bg:'poster',note:'Poster: ULTIMATE CHALLENGE (1s readability)'},
+{sc:'SC03',id:'03-02',d:2.5,bg:'board',cam:'cuA',note:'Ahmed eyes widen',
+ A:(tl)=>({expr:tl>0.4?'wide':'neutral',look:[4,-2]}),lines:[['A','(breath) Whoa…',0.3,0.8,'inner']]},
+{sc:'SC03',id:'03-03',d:3,bg:'board',cam:'cuS',note:'ADJ1 — Sana: "Finally." (worthy challenge)',
+ S:(tl)=>({expr:tl>0.4?'smirk':'neutral',look:[4,-2]}),lines:[['S','Finally.',0.4,0.6,'inner']]},
+{sc:'SC03',id:'03-04',d:2,bg:'board',cam:'two',note:'Sync turn + eye contact · record scratch @00:47.0',
+ A:(tl)=>({face:tl<0.5?-1:1,expr:tl<0.5?'wide':'annoyed'}),S:(tl)=>({face:tl<0.5?1:-1,expr:tl<0.5?'smirk':'annoyed'}),
+ sfx:[[0.5,'scratch','*SCRRRATCH*']]},
+{sc:'SC03',id:'03-05',d:3,bg:'board',cam:'cuA',note:'Point hold · visemes Ee / W-Oo',
+ A:(tl)=>({expr:'smirk',pose:'point'}),lines:[['A',"This one's mine.",0.2,1.2]]},
+{sc:'SC03',id:'03-06',d:3,bg:'board',cam:'cuS',note:'Smirk hold',
+ S:(tl)=>({face:-1,expr:'smirk'}),lines:[['S','Keep dreaming.',0.2,1.0]]},
+{sc:'SC03',id:'03-07',d:2,bg:'board',cam:'cuA',note:'Cocky hold',
+ A:(tl)=>({expr:'smug',pose:'pockets'}),lines:[['A','Scared?',0.2,0.6]]},
+{sc:'SC03',id:'03-08',d:2.5,bg:'board',cam:'cuS',note:'Eye-roll · pop SFX @00:57.5',
+ S:(tl)=>({face:-1,expr:'annoyed',look:tl<0.6?[0,-6]:[3,0]}),lines:[['S','Of you? Please.',0.6,1.1]],sfx:[[1.0,'pop','pop!']]},
+{sc:'SC03',id:'03-09',d:4,bg:'campus',cam:'wide',tr:'whip',note:'Friends with popcorn',
+ A:(tl)=>({x:900,y:560,s:.5,face:1,expr:'annoyed',pose:'point'}),S:(tl)=>({x:1060,y:560,s:.5,face:-1,expr:'annoyed',pose:'stand'}),
+ post:(tl)=>bean(260,720,1.6,'#f6b73c',{popcorn:1,talk:tl>0.3&&tl<1.1,t:tl})+bean(500,720,1.6,'#7fd38a',{popcorn:1,talk:tl>1.4&&tl<2.6,t:tl}),
+ lines:[['F1',"Who's winning?",0.3,0.8],['F2',"They're both cheating.",1.4,1.2]]},
+// ---------------- SC04
+{sc:'SC04',id:'04-01',d:3,bg:'campus',cam:'wide',note:'Crouch hold',
+ A:(tl)=>({x:520,expr:'smirk',pose:'crouch'}),S:(tl)=>({x:760,face:1,expr:'smirk',pose:'crouch'}),
+ pre:(tl)=>bean(1100,680,1.2,'#c9a0dc',{flag:1,flagUp:tl>0.9,talk:tl>0.2&&tl<1.2,t:tl}),
+ lines:[['J','Ready… Go!',0.2,1.0]],sfx:[[0.95,'pop','GO!']]},
+{sc:'SC04',id:'04-02',d:4,bg:'race',pan:(tl)=>tl*700,cam:'wide',note:'Tracking · paths split @01:08',
+ A:(tl)=>({x:500+sm(2,4,tl)*260,y:650+sm(2,4,tl)*60,expr:'smirk',pose:'run'}),S:(tl)=>({x:740,expr:'smirk',pose:'run',seed:.3}),
+ post:(tl)=>tl>2?hand_text(980,300,'shortcut…?',36,C.navy,-6):''},
+{sc:'SC04',id:'04-03',d:3.5,bg:'fence',cam:'wide',note:'ADJ2 — shortcut through fence + mud: stuck',
+ A:(tl)=>tl<1.4?({x:200+tl*380,y:660,s:.85,expr:'smirk',pose:'run'}):({x:732,y:660,s:.85,expr:'panic',pose:'stuck',mud:1,fence:1}),
+ lines:[['A','Shortcut!',0.2,0.6]],sfx:[[1.4,'clang','SPLAT!']]},
+{sc:'SC04',id:'04-04',d:4.5,bg:'finish',cam:'wide',note:'Sana wins by 2s — unambiguous',
+ S:(tl)=>tl<0.8?({x:300+tl*900,expr:'smirk',pose:'run'}):({x:1020,face:-1,expr:'smug',pose:tl>1.5?'cross':'cheer'}),
+ A:(tl)=>({x:-120+sm(3.2,4.5,tl)*380,expr:'panic',pose:'walk',mud:1,fence:1}),
+ lines:[['S','Took the scenic route?',1.5,1.3]]},
+{sc:'SC04',id:'04-05',d:4,bg:'finish',cam:'cuA',tr:'black',note:'Overthink pause after "was…" · SCORE S1–A0',
+ A:(tl)=>({expr:tl<0.9?'think':'smug',mud:0,look:[3,-3]}),lines:[['A','I was…',0.3,0.5],['A','researching aerodynamics.',1.4,1.3]],
+ score:[[2,1,0]]},
+// ---------------- SC05
+{sc:'SC05',id:'05-01',d:3,bg:'court',cam:'wide',note:'Establish court',
+ A:(tl)=>({x:430,expr:'smirk',pose:'stand'}),S:(tl)=>({x:640,face:-1,expr:'neutral',pose:'cross'}),pre:()=>ball(470,560)},
+{sc:'SC05',id:'05-02',d:3.5,bg:'court',cam:'wide',note:'Trick shot + miss',
+ A:(tl)=>({x:430,expr:tl>2.6?'wide':'smirk',pose:tl>1.5?'cheer':'stand'}),S:(tl)=>({x:640,face:-1,expr:'neutral',pose:'cross'}),
+ post:(tl)=>{if(tl<1.5)return ball(470,560);const u=clamp((tl-1.5)/1.5,0,1);return ball(lerp(430,1180,u),lerp(330,330,u)-Math.sin(u*Math.PI)*300);},
+ lines:[['A','Watch and learn.',0.2,1.2]]},
+{sc:'SC05',id:'05-03',d:2,bg:'court',cam:'wide',note:'Bin clang @01:29.5',
+ post:(tl)=>{const u=clamp(tl/1,0,1);return ball(lerp(700,160,u),lerp(200,560,u)-Math.sin(u*Math.PI)*80);},
+ A:(tl)=>({x:640,expr:'wide',pose:'stand',s:.6}),sfx:[[1.0,'clang','CLANG!']]},
+{sc:'SC05',id:'05-04',d:4,bg:'court',cam:'wide',note:'Clean form + swish hold',
+ S:(tl)=>({x:640,expr:tl>2.5?'smug':'neutral',pose:tl>1&&tl<1.6?'cheer':(tl>2.5?'cross':'stand')}),
+ post:(tl)=>{if(tl<1)return ball(690,520);const u=clamp((tl-1)/1.5,0,1);return ball(lerp(640,1040,u),lerp(330,230,u)-Math.sin(u*Math.PI)*260);},
+ lines:[['S','Like this.',0.2,0.7]],sfx:[[2.5,'swish','swish.']]},
+{sc:'SC05',id:'05-05',d:3.5,bg:'court',cam:'cuA',note:'Soft brow — Good Heart',
+ A:(tl)=>({expr:'soft',look:[4,0]}),lines:[['A','Okay… not bad.',0.3,1.5,'inner']]},
+{sc:'SC05',id:'05-06',d:3,bg:'court',cam:'cuS',tr:'dissolve',note:'Sana noticing · SCORE S1–A1',
+ S:(tl)=>({face:-1,expr:'soft',look:[4,0]}),score:[[0.4,1,1]]},
+// ---------------- SC06
+{sc:'SC06',id:'06-01',d:4,bg:'quiz',cam:'mid',note:'ADJ3 — scoreboard lower-third 1–1',
+ A:(tl)=>({x:400,y:560,s:.75,expr:tl>1?'wide':'think',pose:tl>1&&tl<1.6?'cheer':'stand'}),S:(tl)=>({x:880,y:560,s:.75,face:-1,expr:tl>1?'wide':'think',pose:tl>1&&tl<1.6?'cheer':'stand'}),
+ post:(tl)=>bean(640,720,1.0,'#f6d14a',{mic:1,talk:tl>0.3&&tl<0.9,t:tl}),
+ lines:[['H','Capital of…?',0.3,0.6]],sfx:[[1.0,'buzz','BZZZT!']],score:[[0,1,1]]},
+{sc:'SC06',id:'06-02',d:3,bg:'quiz',note:'Friend aside',
+ post:(tl)=>bean(640,760,2.2,'#7fd38a',{talk:tl>0.3&&tl<2.3,t:tl}),lines:[['F2',"It's Ahmed and Sana. It IS the answer.",0.3,2.0]]},
+{sc:'SC06',id:'06-03',d:5,bg:'puzzle',cam:'mid',note:'Puzzle — Ahmed wins @01:52',
+ A:(tl)=>({x:420,expr:tl>4?'happy':'think',pose:tl>4?'cheer':'chin'}),S:(tl)=>({x:860,face:-1,expr:tl>4?'annoyed':'smirk',pose:'cross'}),
+ lines:[['S','You call that a system?',0.3,1.2],['A',"It's called intuition.",1.8,1.1]],score:[[4,1,2]]},
+{sc:'SC06',id:'06-04',d:6,bg:'present',cam:'mid',tr:'whip',note:'Presentation — Sana wins @01:58',
+ A:(tl)=>({x:250,expr:tl<2.3?'happy':'annoyed',pose:tl<2.3?'shrug':'cross'}),S:(tl)=>({x:1020,face:-1,expr:'smug',pose:tl>2.4?'point':'stand'}),
+ pre:(tl)=>tl<2.3?hand_text(640,230,'✨ magic ✨',64,'#e2557f'):`<g>${hand_text(640,140,'Footnote 42',34,C.navy)}<rect x="470" y="190" width="60" height="150" fill="#3d6fb6"/><rect x="560" y="240" width="60" height="100" fill="#ef86a6"/><rect x="650" y="160" width="60" height="180" fill="#5fd38a"/><rect x="740" y="210" width="60" height="130" fill="#f6b73c"/></g>`,
+ lines:[['A','And then… magic happens.',0.3,1.8],['S','As per footnote 42…',2.5,1.5]],score:[[5,2,2]]},
+{sc:'SC06',id:'06-05',d:4,bg:'title',tr:'dissolve',note:'Overlay animates to TIE 2–2 (music dip)',
+ post:(tl)=>{const p=ease(tl/0.6);return `<g opacity="${p}" transform="translate(640 360) scale(${0.8+0.2*p})"><rect x="-360" y="-150" width="720" height="300" rx="24" fill="#fff4cf" stroke="${C.line}" stroke-width="6"/>${hand_text(-180,-40,'SANA',54,'#e2557f')}${hand_text(180,-40,'AHMED',54,'#2f4a7a')}${hand_text(-180,70,'2',110,C.line)}${hand_text(180,70,'2',110,C.line)}${hand_text(0,40,'—',80,C.line)}${tl>1?hand_text(0,-100,'TIE!',56,'#f08a1c',-6):''}</g>`;}},
+// ---------------- SC07
+{sc:'SC07',id:'07-01',d:4.5,bg:'stage',cam:'wide',note:'Judge reveal · scratch @02:05 · gasp',
+ A:(tl)=>({x:360,y:560,s:.65,expr:tl>2.1?'wide':'smirk'}),S:(tl)=>({x:920,y:560,s:.65,face:-1,expr:tl>2.1?'wide':'smirk'}),
+ pre:(tl)=>bean(640,560,1.1,'#c9a0dc',{mic:1,talk:tl>0.3&&tl<2.3,t:tl,mouth:tl>2.4?'o':null}),
+ lines:[['J','Final challenge… requires PAIRS.',0.3,2.0],['Crowd','(gasp)',2.4,1.0]],sfx:[[2.0,'scratch','*SCRATCH*'],[2.4,'gasp','']]},
+{sc:'SC07',id:'07-02',d:3,bg:'stage',cam:'cuA',note:'Panic hold',A:(tl)=>({expr:'panic',pose:'shrug'}),lines:[['A',"I'm finding another partner.",0.2,1.4]]},
+{sc:'SC07',id:'07-03',d:3,bg:'stage',cam:'cuS',note:'Smug',S:(tl)=>({face:-1,expr:'smug',pose:'cross'}),lines:[['S','Nobody wants you.',0.2,1.1]]},
+{sc:'SC07',id:'07-04',d:2.5,bg:'stage',cam:'cuA',note:'Defensive',A:(tl)=>({expr:'annoyed',pose:'cross'}),lines:[['A','I have options.',0.2,0.9]]},
+{sc:'SC07',id:'07-05',d:2.5,bg:'stage',cam:'cuS',note:'Challenge hold',S:(tl)=>({face:-1,expr:'smirk',pose:'cross'}),lines:[['S','Name one.',0.2,0.6]]},
+{sc:'SC07',id:'07-06',d:4.5,bg:'stage',cam:'cuA',note:'Crickets @02:20–02:22 · overthinking brow loop',
+ A:(tl)=>({expr:'think',pose:'chin',look:[3,-4]}),lines:[["A","I'm…",0.2,0.6],['A','still researching.',1.4,1.4]],sfx:[[1.5,'crickets','chirp… chirp…']]},
+{sc:'SC07',id:'07-07',d:4,bg:'stage',cam:'two',fx:'push',note:'Sync "Ew." + annoyed look + push-in',
+ A:(tl)=>({face:1,expr:tl<0.7?'annoyed':'annoyed',talk:false}),S:(tl)=>({face:-1,expr:'annoyed'}),
+ lines:[['Both','Ew.',0.2,0.4]]},
+// ---------------- SC08
+{sc:'SC08',id:'08-01',d:5,bg:'workshop',cam:'mid',note:'ADJ4 — all plan vs. all improv',
+ S:(tl)=>({x:860,face:-1,expr:'neutral',pose:'hold',prop:'blueprint'}),A:(tl)=>({x:420,expr:'smirk',pose:'hold',prop:'wires'}),
+ pre:(tl)=>box(640,560,1,'off',tl),lines:[['S','We need a plan.',0.3,1.0],['A','We need…',1.8,0.5],['A','vibes.',2.6,0.4]]},
+{sc:'SC08',id:'08-02',d:4,bg:'workshop',cam:'cuS',note:'She fixes his wiring but removes flexibility',
+ S:(tl)=>({face:-1,expr:'annoyed',pose:'point'}),lines:[['S','You changed my change!',0.3,1.3]]},
+{sc:'SC08',id:'08-03',d:4,bg:'workshop',cam:'cuA',note:'He adds a shortcut but removes redundancy',
+ A:(tl)=>({expr:'annoyed',pose:'shrug'}),lines:[['A','Your plan is too complicated!',0.3,1.5]]},
+{sc:'SC08',id:'08-04',d:6,bg:'workshop',cam:'mid',note:'Fast montage — works temporarily @02:45',
+ A:(tl)=>Math.floor(tl/0.75)%2===0?({x:520,expr:'think',pose:'hold',prop:'wires',seed:tl}):({hidden:1}),
+ S:(tl)=>Math.floor(tl/0.75)%2===1?({x:760,face:-1,expr:'think',pose:'hold',prop:'blueprint'}):({hidden:1}),
+ pre:(tl)=>box(640,560,1,tl>5?'on':'blink',tl),sfx:[[0.75,'pop',''],[1.5,'pop',''],[2.25,'pop',''],[3,'pop',''],[3.75,'pop',''],[4.5,'pop','']]},
+{sc:'SC08',id:'08-05',d:5,bg:'workshop',cam:'mid',tr:'black',note:'False success — lights ON',
+ A:(tl)=>({x:400,expr:tl<1?'wide':'happy'}),S:(tl)=>({x:880,face:-1,expr:tl<1?'wide':'happy'}),
+ pre:(tl)=>box(640,560,1,'on',tl),lines:[['Both','Wait…',0.4,0.6]]},
+// ---------------- SC09
+{sc:'SC09',id:'09-01',d:4,bg:'workshop',cam:'mid',note:'Box working — false confidence',
+ A:(tl)=>({x:400,expr:'happy',pose:'cheer'}),S:(tl)=>({x:880,face:-1,expr:'happy',pose:'cheer'}),pre:(tl)=>box(640,560,1,'on',tl)},
+{sc:'SC09',id:'09-02',d:3,bg:'workshop',note:'Wire smokes — why it fails',
+ pre:(tl)=>box(640,640,2.4,'smoke',tl),
+ post:(tl)=>`<g opacity="${ease((tl-0.4)/0.4)}">`+bubble(280,150,420,80,"Ahmed's shortcut: no load support",22)+`</g><g opacity="${ease((tl-1.2)/0.4)}">`+bubble(1000,260,400,80,"Sana's frame: no flex",24)+`</g>`},
+{sc:'SC09',id:'09-03',d:4.5,bg:'workshop',cam:'mid',fx:'shake',note:'Collapse — shake cam',
+ A:(tl)=>({x:400,expr:'panic',pose:'shrug'}),S:(tl)=>({x:880,face:-1,expr:'panic',pose:'stuck'}),
+ pre:(tl)=>box(640,560,1,tl>1.2?'broken':'smoke',tl),lines:[['S','No no no!',0.3,1.0],['A','Okay okay okay!',1.5,1.0]],sfx:[[1.2,'clang','CRASH!']]},
+{sc:'SC09',id:'09-04',d:4,bg:'workshop',cam:'cuS',note:'Panic rebuild instinct (her flaw)',S:(tl)=>({face:-1,expr:'panic',pose:'shrug'}),lines:[['S','We have to rebuild everything!',0.3,1.6]]},
+{sc:'SC09',id:'09-05',d:4,bg:'workshop',cam:'cuA',note:'Shortcut instinct (his flaw)',
+ A:(tl)=>({expr:tl<0.9?'think':'smirk',pose:'point'}),lines:[['A','Or…',0.3,0.4],['A','we shortcut!',1.0,0.8]],
+ post:(tl)=>tl>0.9?`<g transform="translate(860 120)"><circle r="44" fill="#f6d14a" stroke="${C.line}" stroke-width="4"/><rect x="-16" y="40" width="32" height="24" fill="#999" stroke="${C.line}" stroke-width="3"/><path d="M-70 -30l-24 -10M70 -30l24 -10M0 -60v-26" stroke="#f6d14a" stroke-width="6"/></g>`:''},
+{sc:'SC09',id:'09-06',d:5,bg:'workshop',cam:'cuS',note:'Realization @03:12',
+ S:(tl)=>({face:-1,expr:tl<1.5?'wide':'soft'}),lines:[['S','Wait…',0.3,0.5],['S','your stupid shortcut might actually work.',1.0,1.6]]},
+{sc:'SC09',id:'09-07',d:2.5,bg:'workshop',cam:'cuA',note:'Smug hold',A:(tl)=>({expr:'smug',pose:'pockets'}),lines:[['A','Say that again.',0.2,0.8]]},
+{sc:'SC09',id:'09-08',d:2.5,bg:'workshop',cam:'cuS',note:'',S:(tl)=>({face:-1,expr:'smirk'}),lines:[['S',"Don't ruin the moment.",0.2,1.1]]},
+// ---------------- SC10
+{sc:'SC10',id:'10-01',d:5,bg:'campus',pan:(tl)=>tl*120,cam:'mid',note:'Sync walk — carry box together',
+ A:(tl)=>({x:470,expr:'happy',pose:'walkcarry'}),S:(tl)=>({x:810,face:-1,expr:'happy',pose:'walkcarry'}),
+ post:(tl)=>box(640,470+Math.abs(Math.sin(tl*7))*-4,0.95,'fixed',tl)},
+{sc:'SC10',id:'10-02',d:5,bg:'stage',cam:'mid',note:'Improv hook',
+ A:(tl)=>({x:380,y:600,s:.85,expr:'smirk',pose:'present'}),S:(tl)=>({x:900,y:600,s:.85,face:-1,expr:'soft'}),
+ pre:(tl)=>box(640,560,0.9,'fixed',tl),lines:[['A','So…',0.3,0.4],['A','we broke it. Then we made it better.',1.1,1.7]]},
+{sc:'SC10',id:'10-03',d:4,bg:'stage',cam:'cuS',note:'Quick redirect',S:(tl)=>({face:-1,expr:'neutral',pose:'point'}),lines:[['S','Ahmed — left wire.',0.3,1.0]]},
+{sc:'SC10',id:'10-04',d:4,bg:'stage',cam:'two',note:'Instant understanding',
+ A:(tl)=>({expr:tl>1?'soft':'neutral'}),S:(tl)=>({face:-1,expr:'soft'}),lines:[['A','Got it.',0.3,0.4]]},
+{sc:'SC10',id:'10-05',d:4.5,bg:'stage',cam:'mid',note:'Gives spotlight — Good Heart',
+ A:(tl)=>({x:420,y:640,s:.9,expr:'soft',pose:'point'}),S:(tl)=>({x:860,y:640,s:.9,face:-1,expr:tl>1.4?'soft':'wide'}),
+ lines:[['A','My partner built the real fix.',0.3,1.8]]},
+{sc:'SC10',id:'10-06',d:6,bg:'stage',cam:'cuS',note:'Emotional beat — 0.8s pause',S:(tl)=>({face:-1,expr:'soft'}),
+ lines:[['S','Because sometimes…',0.3,1.0],['S','lazy and planned work better together.',2.1,1.9]]},
+{sc:'SC10',id:'10-07',d:4,bg:'stage',bgOpt:{cheer:1},cam:'wide',note:'Crowd cheer build',
+ A:(tl)=>({x:500,y:560,s:.65,expr:'happy',pose:'cheer'}),S:(tl)=>({x:780,y:560,s:.65,face:-1,expr:'happy',pose:'cheer'}),sfx:[[0,'cheer','']]},
+// ---------------- SC11
+{sc:'SC11',id:'11-01',d:4,bg:'stage',cam:'wide',note:'Drumroll 2s · winners',
+ A:(tl)=>({x:360,y:560,s:.65,expr:tl>2.6?'wide':'think'}),S:(tl)=>({x:920,y:560,s:.65,face:-1,expr:tl>2.6?'wide':'think'}),
+ pre:(tl)=>bean(640,560,1.1,'#c9a0dc',{mic:1,talk:tl>2&&tl<4,t:tl})+trophy(760,400,0.9),
+ lines:[['J','Winners are… Ahmed and Sana!',2.0,2.0]],sfx:[[0,'drumroll','drrrrrr…']]},
+{sc:'SC11',id:'11-02',d:3,bg:'stage',cam:'two',note:'Beat — look at each other',
+ A:(tl)=>({expr:'neutral'}),S:(tl)=>({face:-1,expr:'neutral'})},
+{sc:'SC11',id:'11-03',d:2.5,bg:'stage',cam:'cuA',A:(tl)=>({expr:'smug',pose:'pockets'}),lines:[['A','So technically, I won.',0.2,1.3]]},
+{sc:'SC11',id:'11-04',d:2.5,bg:'stage',cam:'cuS',S:(tl)=>({face:-1,expr:'annoyed'}),lines:[['S','WE won.',0.2,0.6]]},
+{sc:'SC11',id:'11-05',d:2,bg:'stage',cam:'cuA',A:(tl)=>({expr:'smirk',pose:'point'}),lines:[['A','You were on my team.',0.2,1.0]]},
+{sc:'SC11',id:'11-06',d:2,bg:'stage',cam:'cuS',S:(tl)=>({face:-1,expr:'smirk',pose:'point'}),lines:[['S','You were on MY team.',0.2,1.0]]},
+{sc:'SC11',id:'11-07',d:5,bg:'stage',cam:'mid',tr:'dissolve',note:'Rapid fire, 0.2s gaps',
+ A:(tl)=>({x:470,expr:tl<2.8?'smirk':'wide',pose:tl>1.8&&tl<2.8?'hold':'stand'}),S:(tl)=>({x:810-sm(2.9,4,tl)*60,face:-1,expr:tl<2.9?'smirk':'smug',pose:'hold',prop:'trophy'}),
+ lines:[['A','Same trophy.',0.2,0.7],['S','Exactly.',1.1,0.5],['A','So I can hold it?',1.8,0.9],['S','Absolutely not.',2.9,1.0]]},
+{sc:'SC11',id:'11-08',d:5,bg:'rooftop',cam:'wide',tr:'dissolve',note:'Evening crickets — quiet wide',
+ A:(tl)=>({x:560,y:640,s:.62,expr:'soft',pose:'sit'}),S:(tl)=>({x:720,y:640,s:.62,face:-1,expr:'soft',pose:'sit',prop:'trophy'}),sfx:[[0,'crickets','']]},
+{sc:'SC11',id:'11-09',d:4.5,bg:'rooftopCU',cam:'two',note:'Pause after "You know…"',
+ A:(tl)=>({expr:'neutral',look:[4,0]}),S:(tl)=>({face:-1,expr:'soft'}),lines:[['S','You know…',0.3,0.6],['S','we actually make a pretty good team.',1.5,1.7]]},
+{sc:'SC11',id:'11-10',d:4,bg:'rooftopCU',cam:'cuA',silent:true,note:'ADJ5 — 2s ABSOLUTE SILENCE, no joke. Good Heart beat.',
+ A:(tl)=>({expr:'soft',look:[4,1]})},
+{sc:'SC11',id:'11-11',d:4.5,bg:'rooftopCU',cam:'cuA',note:'Sana laugh @04:31',
+ A:(tl)=>({expr:tl<3?'smirk':'happy'}),lines:[['A',"Don't say things like that. You'll ruin my reputation.",0.2,2.5],['S','(laughs)',3.5,1.0]]},
+{sc:'SC11',id:'11-12',d:4,bg:'rooftop',cam:'wide',note:'Sana walks away',
+ A:(tl)=>({x:520,y:640,s:.62,expr:'soft',pose:'sit'}),S:(tl)=>tl<1.1?({x:720,y:640,s:.62,face:-1,expr:'smirk',pose:'stand',prop:'trophy'}):({x:720+(tl-1.1)*140,y:640,s:.62,expr:'smirk',pose:'walk',prop:'trophy'}),
+ lines:[['S','Rematch tomorrow?',0.2,1.0]]},
+{sc:'SC11',id:'11-13',d:3,bg:'rooftopCU',cam:'cuA',A:(tl)=>({expr:'smirk'}),lines:[['A','Obviously.',0.2,0.7]]},
+{sc:'SC11',id:'11-14',d:3.5,bg:'rooftop',cam:'wide',note:'Calling after her',
+ A:(tl)=>({x:420,y:640,s:.7,expr:'smirk',pose:'point'}),S:(tl)=>({x:1080+tl*30,y:640,s:.6,expr:'smirk',pose:'walk',prop:'trophy'}),lines:[['A',"You're going to lose.",0.2,1.0]]},
+{sc:'SC11',id:'11-15',d:4,bg:'rooftopCU',cam:'cuS',note:'Smirk + turn hold',S:(tl)=>({face:tl<0.9?1:-1,expr:'smirk',prop:'trophy',pose:'hold'}),lines:[['S','Keep talking.',1.0,0.7]]},
+{sc:'SC11',id:'11-16',d:4,bg:'rooftopCU',cam:'cuA',fadeOut:1,note:'Final smile hold — music swell',A:(tl)=>({expr:'happy'})},
+// ---------------- END CARD
+{sc:'END',id:'END',d:8,bg:'endcard',fadeIn:1,fadeOut:1,note:'End card (credits placeholder)',
+ post:(tl)=>hand_text(640,300,'WANDERLAND',96,'#f6d14a',-2)+hand_text(640,370,'EP01 — to be continued… (rematch tomorrow)',32,'#f1edf6')+hand_text(640,470,'Rough animatic · placeholder art · temp VO',22,'#a39dae',0,'middle',400)},
+];
+const CHECKPOINTS=[[1,38],[2,82],[3,123],[4,147],[5,171],[6,200.5],[7,233],[8,267.5],[9,290.5]];
+
+function nameCard(name,traits,tl,col){
+  const p=ease((tl-0.6)/0.5);
+  let s=`<g opacity="${p}" transform="translate(${80-(1-p)*40} 120)"><rect x="0" y="0" width="300" height="70" rx="10" fill="${col}"/>${hand_text(150,50,name,46,'#fff')}`;
+  traits.forEach((tr,i)=>{const q=ease((tl-1.2-i*0.5)/0.3);s+=`<g opacity="${q}">${hand_text(16,120+i*44,'• '+tr,30,C.navy,0,'start')}</g>`;});
+  return s+'</g>';
+}
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+let acc=0;
+SHOTS.forEach(s=>{s.start=acc;acc+=s.d;});
+const TOTAL=acc;
+function shotAt(t){let i=SHOTS.findIndex(s=>t<s.start+s.d);if(i<0)i=SHOTS.length-1;return i;}
+function scoreAt(t){let cur=null;for(const s of SHOTS){if(!s.score)continue;for(const [lt,sa,ah] of s.score){if(t>=s.start+lt)cur=[sa,ah,s.start+lt];}}
+  // lower-third only shown SC04-05 through SC06-04
+  if(t<SHOTS.find(s=>s.id==='04-05').start||t>=SHOTS.find(s=>s.id==='06-05').start)return null;return cur;}
+
+const SPEAKER={A:'AHMED',S:'SANA',J:'JUDGE',F1:'FRIEND 1',F2:'FRIEND 2',H:'HOST',VO:'NARRATOR',Both:'BOTH',Crowd:'CROWD'};
+const fmt=t=>{const m=Math.floor(t/60),s=(t%60);return String(m).padStart(2,'0')+':'+s.toFixed(1).padStart(4,'0');};
+
+function renderFrame(t){
+  const i=shotAt(t), sh=SHOTS[i], tl=t-sh.start;
+  const pan=sh.pan?sh.pan(tl):0;
+  let out=(BG[sh.bg]||BG.black)(t,pan,sh.bgOpt||{});
+  if(sh.pre) out+=sh.pre(tl);
+  const cam=CAM[sh.cam]||CAM.mid;
+  const lines=sh.lines||[];
+  const talking=who=>lines.some(([w,_,st,du,fl])=>fl!=='inner'&&(w===who||w==='Both')&&tl>=st&&tl<st+du);
+  for(const who of ['A','S']){
+    const f=sh[who]; if(!f) continue;
+    const o=Object.assign({},f(tl,sh.d));
+    if(o.hidden) continue;
+    o.x=o.x??cam[who]??640; o.y=o.y??cam.y; o.s=o.s??cam.s;
+    if(sh.cam==='two'||sh.cam==='mid') o.face=o.face??(who==='A'?1:-1);
+    if(o.talk===undefined) o.talk=talking(who);
+    out+=drawChar(who,o,t);
+  }
+  if(sh.post) out+=sh.post(tl);
+  // SFX onomatopoeia
+  for(const [st,_k,label] of (sh.sfx||[])){ if(label&&tl>=st&&tl<st+0.9){const p=ease((tl-st)/0.15);out+=`<g transform="translate(1040 120) scale(${0.6+0.4*p}) rotate(-8)">${hand_text(0,0,label,54,'#f08a1c')}</g>`;} }
+  // camera fx
+  let cx='';
+  if(sh.fx==='shake'){const a=6*Math.sin(t*53),b=5*Math.cos(t*41);cx=`translate(${a} ${b})`;}
+  if(sh.fx==='push'){const k=1+0.18*ease(tl/sh.d);cx=`translate(640 360) scale(${k}) translate(-640 -360)`;}
+  if(sh.tr==='whip'&&tl>sh.d-0.35){const u=(tl-(sh.d-0.35))/0.35;cx+=` translate(${-u*u*1400} 0)`;}
+  if(i>0&&SHOTS[i-1].tr==='whip'&&tl<0.25){const u=1-tl/0.25;cx+=` translate(${u*u*1400} 0)`;}
+  out=`<g transform="${cx}">${out}</g>`;
+  if((sh.tr==='whip'&&tl>sh.d-0.35)||(i>0&&SHOTS[i-1].tr==='whip'&&tl<0.25)) out+=`<rect width="1280" height="720" fill="#fff" opacity=".25"/>`;
+  // score lower-third
+  const sc=scoreAt(t);
+  if(sc){const pop=ease((t-sc[2])/0.25);out+=`<g transform="translate(840 556)"><rect width="400" height="64" rx="12" fill="#0f1830" opacity=".88"/>${hand_text(22,44,'SANA',30,'#f07aa0',0,'start')}${hand_text(200,46,`${sc[0]} – ${sc[1]}`,38*(0.8+0.2*pop),'#fff')}${hand_text(378,44,'AHMED',30,'#9db6e8',0,'end')}</g>`;}
+  // letterbox subtitles
+  if(opts.subs){
+    const cur=lines.filter(([_w,_t,st,du])=>tl>=st-0.05&&tl<st+du+0.6);
+    cur.slice(-2).forEach(([w,text,,, fl],k,arr)=>{
+      const y=690-(arr.length-1-k)*46;
+      const lab=(SPEAKER[w]||w)+(fl==='inner'?' (inner)':'');
+      const txt=fl==='inner'?`<tspan font-style="italic">${esc(text)}</tspan>`:esc(text);
+      out+=`<text x="640" y="${y}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="30" font-weight="600" stroke="#000" stroke-width="6" paint-order="stroke" fill="#fff"><tspan fill="${w==='S'?'#ffb3c9':w==='A'?'#b9cdf5':'#f6d14a'}">${lab}: </tspan>${txt}</text>`;
+    });
+  }
+  // fades
+  let dark=0;
+  if(sh.fadeIn&&tl<sh.fadeIn) dark=Math.max(dark,1-tl/sh.fadeIn);
+  if(sh.fadeOut&&tl>sh.d-sh.fadeOut) dark=Math.max(dark,(tl-(sh.d-sh.fadeOut))/sh.fadeOut);
+  if(sh.tr==='black'&&tl>sh.d-0.5) dark=1;
+  if(sh.tr==='dissolve'&&tl>sh.d-0.4) dark=Math.max(dark,(tl-(sh.d-0.4))/0.4*0.85);
+  if(i>0&&SHOTS[i-1].tr==='dissolve'&&tl<0.4) dark=Math.max(dark,(1-tl/0.4)*0.85);
+  if(dark>0) out+=`<rect width="1280" height="720" fill="#000" opacity="${clamp(dark,0,1).toFixed(3)}"/>`;
+  // HUD
+  if(opts.hud){
+    const hudTxt=`${sh.sc} · ${sh.id} · ${sh.d.toFixed(1)}s${sh.note?'  —  '+sh.note:''}`;
+    out+=`<g font-family="ui-monospace,Menlo,monospace" font-size="17" fill="#fff"><rect x="12" y="12" width="${(hudTxt.length*10.3+24).toFixed(0)}" height="34" rx="6" fill="#000" opacity=".5"/><text x="22" y="35">${esc(hudTxt)}</text><rect x="1128" y="12" width="140" height="34" rx="6" fill="#000" opacity=".5"/><text x="1198" y="35" text-anchor="middle">${fmt(t)}</text></g>`;
+    if(sh.silent&&tl<2) out+=`<g><rect x="490" y="60" width="300" height="40" rx="8" fill="#e2557f" opacity=".85"/><text x="640" y="87" text-anchor="middle" font-family="system-ui" font-size="20" font-weight="700" fill="#fff">SILENCE ${(2-tl).toFixed(1)}s — no joke</text></g>`;
+  }
+  svg.innerHTML=out;
+  return i;
+}
+
+/* ============================================================
+   AUDIO — temp VO (speechSynthesis) + synth SFX (WebAudio)
+   ============================================================ */
+let ac=null;
+function actx(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return ac;}
+function noise(ctx,dur){const b=ctx.createBuffer(1,ctx.sampleRate*dur,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=ctx.createBufferSource();s.buffer=b;return s;}
+function env(ctx,node,a,dcy,peak=0.5,t0){const g=ctx.createGain();const now=t0??ctx.currentTime;g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(peak,now+a);g.gain.exponentialRampToValueAtTime(0.0001,now+a+dcy);node.connect(g);g.connect(ctx.destination);return g;}
+function sfx(kind){
+  const ctx=actx(); if(!ctx||!opts.sfx) return; const now=ctx.currentTime;
+  const osc=(type,f,a,d,p)=>{const o=ctx.createOscillator();o.type=type;o.frequency.value=f;env(ctx,o,a,d,p);o.start();o.stop(now+a+d+0.05);return o;};
+  if(kind==='pop'){const o=osc('sine',520,0.005,0.12,0.4);o.frequency.exponentialRampToValueAtTime(1200,now+0.1);}
+  if(kind==='buzz'){osc('square',110,0.01,0.5,0.25);osc('square',113,0.01,0.5,0.2);}
+  if(kind==='clang'){[310,467,689,1033].forEach((f,k)=>osc('sine',f,0.002,0.9-k*0.15,0.25));}
+  if(kind==='swish'||kind==='scratch'||kind==='gasp'){const n=noise(ctx,0.6),f=ctx.createBiquadFilter();f.type='bandpass';f.Q.value=kind==='scratch'?8:1.2;f.frequency.setValueAtTime(kind==='scratch'?2400:3000,now);f.frequency.exponentialRampToValueAtTime(kind==='scratch'?300:800,now+0.45);n.connect(f);env(ctx,f,0.02,kind==='gasp'?0.6:0.4,kind==='gasp'?0.25:0.5);n.start();}
+  if(kind==='crickets'){for(let k=0;k<6;k++){const o=ctx.createOscillator();o.frequency.value=4300;const g=env(ctx,o,0.01,0.12,0.08,now+k*0.33);o.start(now+k*0.33);o.stop(now+k*0.33+0.2);}}
+  if(kind==='drumroll'){for(let k=0;k<36;k++){const n=noise(ctx,0.06),f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=900;n.connect(f);env(ctx,f,0.004,0.05,0.18+k*0.006,now+k*0.055);n.start(now+k*0.055);}}
+  if(kind==='cheer'){const n=noise(ctx,4),f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=1200;f.Q.value=0.6;n.connect(f);env(ctx,f,1.5,2.4,0.35);n.start();}
+}
+const VOICE={A:{pitch:0.85,rate:0.95},S:{pitch:1.35,rate:1.1},J:{pitch:0.7,rate:0.95},F1:{pitch:1.6,rate:1.15},F2:{pitch:1.1,rate:1.15},H:{pitch:1.0,rate:1.0},VO:{pitch:0.9,rate:0.9},Both:{pitch:1.1,rate:1}};
+function speak(w,text,fl){
+  if(!opts.vo||!('speechSynthesis' in window)||text.startsWith('(')) return;
+  const u=new SpeechSynthesisUtterance(text.replace(/…/g,'...'));const v=VOICE[w]||VOICE.H;
+  u.pitch=v.pitch;u.rate=v.rate;u.volume=fl==='inner'?0.6:1;speechSynthesis.speak(u);
+}
+
+/* ============================================================
+   PLAYER
+   ============================================================ */
+const svg=document.getElementById('svg');
+const $=id=>document.getElementById(id);
+const opts={vo:true,sfx:true,hud:true,subs:true};
+const RENDER=new URLSearchParams(location.search).has('render');
+if(RENDER){document.body.classList.add('render');opts.hud=new URLSearchParams(location.search).get('hud')==='1';}
+let T=0,playing=false,last=0,lastShot=-1,fired=new Set();
+function setT(t,seek){T=clamp(t,0,TOTAL);if(seek){fired=new Set();try{speechSynthesis.cancel();}catch(e){}markFired();}draw();}
+function markFired(){SHOTS.forEach((s,i)=>{(s.lines||[]).forEach((l,k)=>{if(s.start+l[2]<T)fired.add('l'+i+'_'+k);});(s.sfx||[]).forEach((x,k)=>{if(s.start+x[0]<T)fired.add('s'+i+'_'+k);});});}
+function triggers(){
+  const i=shotAt(T),s=SHOTS[i],tl=T-s.start;
+  (s.lines||[]).forEach((l,k)=>{const id='l'+i+'_'+k;if(!fired.has(id)&&tl>=l[2]){fired.add(id);speak(l[0],l[1],l[4]);}});
+  (s.sfx||[]).forEach((x,k)=>{const id='s'+i+'_'+k;if(!fired.has(id)&&tl>=x[0]){fired.add(id);sfx(x[1]);}});
+}
+function draw(){
+  const i=renderFrame(T);
+  if(RENDER) return;
+  $('time').textContent=fmt(T)+' / '+fmt(TOTAL);
+  $('scrub').value=Math.round(T/TOTAL*1000);
+  if(i!==lastShot){lastShot=i;document.querySelectorAll('#list tr').forEach((r,k)=>r.classList.toggle('cur',k===i));const r=document.querySelectorAll('#list tr')[i];if(r&&playing)r.scrollIntoView({block:'nearest'});}
+}
+function loop(ts){
+  if(!playing) return;
+  const dt=last?(ts-last)/1000:0;last=ts;
+  T+=Math.min(dt,0.1);
+  if(T>=TOTAL){T=TOTAL;pause();}
+  triggers();draw();
+  requestAnimationFrame(loop);
+}
+function play(){if(T>=TOTAL)setT(0,true);actx()?.resume?.();playing=true;last=0;$('play').textContent='❚❚ Pause';requestAnimationFrame(loop);}
+function pause(){playing=false;$('play').textContent='▶ Play';try{speechSynthesis.cancel();}catch(e){}}
+window.renderAt=t=>{renderFrame(t);return true;};
+window.ANIMATIC_TOTAL=TOTAL;
+
+if(!RENDER){
+  $('play').onclick=()=>playing?pause():play();
+  $('prev').onclick=()=>{const i=shotAt(T);const s=SHOTS[i];setT(T-s.start>0.5?s.start:SHOTS[Math.max(0,i-1)].start,true);};
+  $('next').onclick=()=>{const i=shotAt(T);setT(SHOTS[Math.min(SHOTS.length-1,i+1)].start,true);};
+  $('scrub').oninput=e=>setT(e.target.value/1000*TOTAL,true);
+  for(const k of ['vo','sfx','hud','subs']) $(k).onchange=e=>{opts[k]=e.target.checked;if(k==='vo'&&!opts.vo)try{speechSynthesis.cancel();}catch(_){}draw();};
+  document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;if(e.code==='Space'){e.preventDefault();playing?pause():play();}if(e.code==='ArrowRight'){e.preventDefault();$('next').click();}if(e.code==='ArrowLeft'){e.preventDefault();$('prev').click();}});
+  $('marks').innerHTML=CHECKPOINTS.map(([n,t])=>`<span style="left:${t/TOTAL*100}%" title="Checkpoint ${n} @ ${fmt(t)}" data-t="${t}">▲${n}</span>`).join('');
+  $('marks').onclick=e=>{const t=e.target.dataset.t;if(t)setT(+t,true);};
+  $('list').innerHTML=SHOTS.map((s,i)=>`<tr data-i="${i}"><td class="n"><b>${s.id}</b></td><td class="n">${fmt(s.start)}</td><td class="n">${s.d.toFixed(1)}s</td><td>${(s.lines||[]).map(l=>`<b>${SPEAKER[l[0]]||l[0]}:</b> ${esc(l[1])}`).join('<br>')||'<i>'+esc(s.note||'')+'</i>'}${s.lines&&s.note?`<br><span style="color:var(--muted)">${esc(s.note)}</span>`:''}</td><td class="n">${s.tr||'cut'}</td></tr>`).join('');
+  $('list').onclick=e=>{const r=e.target.closest('tr');if(r)setT(SHOTS[+r.dataset.i].start+0.001,true);};
+}
+draw();
+</script>
+</body>
+</html>

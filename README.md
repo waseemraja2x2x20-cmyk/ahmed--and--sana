@@ -80,3 +80,32 @@ The Blender boy-rig builder is available at
 [`scripts/blender/build-boy-rig.py`](scripts/blender/build-boy-rig.py). Run it
 from Blender's Text Editor, then import cut artwork as planes and parent each
 piece to the corresponding bone.
+
+## EP01 rough animatic
+
+A playable rough animatic of WANDERLAND EP01 is available at
+[`animation/animatic/EP01-rough-animatic.html`](animation/animatic/EP01-rough-animatic.html).
+Open it in a browser to watch all 75 shots (SC01–SC11 plus end card, ~4:58).
+Each shot is timed to [`docs/EP01-TIMING-SHEET-v1.0.md`](docs/EP01-TIMING-SHEET-v1.0.md).
+The characters are vector placeholders of Ahmed and Sana, drawn from the
+canonical palette and silhouettes. They are not production art. The player
+includes:
+
+- temp VO through browser speech synthesis, with a different pitch per character
+- synthesized SFX (record scratch, buzzer, clang, crickets, drumroll, cheers)
+- subtitles, a shot HUD, and the SC04–SC06 scoreboard lower-third
+- the protected 2-second silence beat in SC11-10
+- timeline marks for the nine animatic review checkpoints
+- a clickable shot list
+
+To render a silent MP4 with the subtitles and HUD burned in (Playwright and
+ffmpeg required), run:
+
+```sh
+node scripts/animatic/render-ep01.mjs            # exports/EP01-rough-animatic.mp4
+node scripts/animatic/render-ep01.mjs --no-hud   # without the shot HUD
+```
+
+Story timing is the only thing to judge in this animatic. Replace the
+placeholder art with the approved puppets once they pass the checks in
+[`docs/PRODUCTION-READINESS.md`](docs/PRODUCTION-READINESS.md).
