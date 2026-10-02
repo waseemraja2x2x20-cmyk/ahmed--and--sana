@@ -803,10 +803,11 @@ function renderFrame(t){
     const lines=sh.lines||[];
     const cur=lines.filter(([_w,_t,st,du])=>tl>=st-0.05&&tl<st+du+0.6);
     cur.slice(-2).forEach(([w,text,,, fl],k,arr)=>{
-      const y=702-(arr.length-1-k)*34;
+      // Both lines must sit inside the 56px lower bar (664-720): stack smaller when two overlap.
+      const two=arr.length>1, fs=two?20:26, y=two?(k?711:688):702;
       const lab=(SPEAKER[w]||w)+(fl==='inner'?' (inner)':'');
       const txt=fl==='inner'?`<tspan font-style="italic">${esc(text)}</tspan>`:esc(text);
-      out+=`<text x="640" y="${y}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="26" font-weight="600" stroke="#000" stroke-width="5" paint-order="stroke" fill="#fff"><tspan fill="${w==='S'?'#ffb3c9':w==='A'?'#b9cdf5':'#f6d14a'}">${lab}: </tspan>${txt}</text>`;
+      out+=`<text x="640" y="${y}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="${fs}" font-weight="600" stroke="#000" stroke-width="${two?4:5}" paint-order="stroke" fill="#fff"><tspan fill="${w==='S'?'#ffb3c9':w==='A'?'#b9cdf5':'#f6d14a'}">${lab}: </tspan>${txt}</text>`;
     });
   }
   // HUD sits in the top bar
