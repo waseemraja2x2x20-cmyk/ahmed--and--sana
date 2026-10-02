@@ -1,8 +1,8 @@
 // Render the EP01 rough animatic HTML to a silent MP4 (subtitles + shot HUD burned in).
 //
-// Usage: node scripts/animatic/render-ep01.mjs [--fps 24] [--no-hud] [--out exports/EP01-rough-animatic.mp4]
-// Requires Playwright (Chromium) and ffmpeg on PATH. Output goes to exports/,
-// which is not tracked by git.
+// Usage: node scripts/animatic/render-ep01.mjs [--fps 24] [--no-hud] [--out exports/previews/EP01-rough-animatic.mp4]
+// Requires Playwright (Chromium) and ffmpeg on PATH. Output goes to exports/previews/
+// (the project's preview location), which is not tracked by git.
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -25,7 +25,7 @@ const opt = (name, def) => {
 const fps = Number(opt('--fps', 24));
 const hud = !args.includes('--no-hud');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const out = resolve(root, opt('--out', 'exports/EP01-rough-animatic.mp4'));
+const out = resolve(root, opt('--out', 'exports/previews/EP01-rough-animatic.mp4'));
 const page = pathToFileURL(resolve(root, 'animation/animatic/EP01-rough-animatic.html'));
 page.search = hud ? '?render&hud=1' : '?render';
 
@@ -40,14 +40,31 @@ const frames = Math.ceil(total * fps);
 const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-i', '-',
   '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-preset', 'medium', '-movflags', '+faststart', out],
   { stdio: ['pipe', 'inherit', 'inherit'] });
+// Watch ffmpeg from the start so a missing binary or early exit fails fast
+// instead of raising EPIPE or waiting forever on 'drain'.
+let ffFailed = null;
+const ffDone = new Promise((res, rej) => {
+  ff.on('error', (e) => { ffFailed = e; rej(e); });
+  ff.on('close', (c) => {
+    if (c === 0) return res();
+    ffFailed = new Error(`ffmpeg exited ${c}`);
+    rej(ffFailed);
+  });
+});
+ffDone.catch(() => {});
+ff.stdin.on('error', () => {}); // reported through ffDone
 const stage = tab.locator('#stage');
 for (let f = 0; f < frames; f++) {
   await tab.evaluate((t) => window.renderAt(t), f / fps);
   const png = await stage.screenshot({ type: 'png' });
-  if (!ff.stdin.write(png)) await new Promise((r) => ff.stdin.once('drain', r));
+  if (ffFailed) break;
+  if (!ff.stdin.write(png)) await Promise.race([new Promise((r) => ff.stdin.once('drain', r)), ffDone]);
   if (f % (fps * 30) === 0) console.log(`frame ${f}/${frames}`);
 }
 ff.stdin.end();
-await new Promise((r, j) => ff.on('close', (c) => (c === 0 ? r() : j(new Error(`ffmpeg exited ${c}`)))));
-await browser.close();
+try {
+  await ffDone;
+} finally {
+  await browser.close();
+}
 console.log(`wrote ${out} (${total}s @ ${fps}fps)`);

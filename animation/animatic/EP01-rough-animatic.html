@@ -550,7 +550,7 @@ const SHOTS=[
 {sc:'SC11',id:'11-15',d:4,bg:'rooftopCU',cam:'cuS',note:'Smirk + turn hold',S:(tl)=>({face:tl<0.9?1:-1,expr:'smirk',prop:'trophy',pose:'hold'}),lines:[['S','Keep talking.',1.0,0.7]]},
 {sc:'SC11',id:'11-16',d:4,bg:'rooftopCU',cam:'cuA',fadeOut:1,note:'Final smile hold — music swell',A:(tl)=>({expr:'happy'})},
 // ---------------- END CARD
-{sc:'END',id:'END',d:8,bg:'endcard',fadeIn:1,fadeOut:1,note:'End card (credits placeholder)',
+{sc:'END',id:'END',d:8,bg:'endcard',fadeIn:1,fadeOut:1,note:'End card — shortened from the sheet\'s 30s credits',
  post:(tl)=>hand_text(640,300,'WANDERLAND',96,'#f6d14a',-2)+hand_text(640,370,'EP01 — to be continued… (rematch tomorrow)',32,'#f1edf6')+hand_text(640,470,'Rough animatic · placeholder art · temp VO',22,'#a39dae',0,'middle',400)},
 ];
 const CHECKPOINTS=[[1,38],[2,82],[3,123],[4,147],[5,171],[6,200.5],[7,233],[8,267.5],[9,290.5]];
@@ -638,10 +638,12 @@ function renderFrame(t){
 /* ============================================================
    AUDIO — temp VO (speechSynthesis) + synth SFX (WebAudio)
    ============================================================ */
-let ac=null;
-function actx(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return ac;}
+let ac=null,bus=null;
+function actx(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();bus=ac.createGain();bus.connect(ac.destination);}catch(e){}}return ac;}
+// Cut every sound still playing (on seek) by dropping the old output bus.
+function silence(){if(!ac)return;try{bus.disconnect();}catch(e){}bus=ac.createGain();bus.connect(ac.destination);}
 function noise(ctx,dur){const b=ctx.createBuffer(1,ctx.sampleRate*dur,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=ctx.createBufferSource();s.buffer=b;return s;}
-function env(ctx,node,a,dcy,peak=0.5,t0){const g=ctx.createGain();const now=t0??ctx.currentTime;g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(peak,now+a);g.gain.exponentialRampToValueAtTime(0.0001,now+a+dcy);node.connect(g);g.connect(ctx.destination);return g;}
+function env(ctx,node,a,dcy,peak=0.5,t0){const g=ctx.createGain();const now=t0??ctx.currentTime;g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(peak,now+a);g.gain.exponentialRampToValueAtTime(0.0001,now+a+dcy);node.connect(g);g.connect(bus);return g;}
 function sfx(kind){
   const ctx=actx(); if(!ctx||!opts.sfx) return; const now=ctx.currentTime;
   const osc=(type,f,a,d,p)=>{const o=ctx.createOscillator();o.type=type;o.frequency.value=f;env(ctx,o,a,d,p);o.start();o.stop(now+a+d+0.05);return o;};
@@ -668,14 +670,14 @@ const $=id=>document.getElementById(id);
 const opts={vo:true,sfx:true,hud:true,subs:true};
 const RENDER=new URLSearchParams(location.search).has('render');
 if(RENDER){document.body.classList.add('render');opts.hud=new URLSearchParams(location.search).get('hud')==='1';}
-let T=0,playing=false,last=0,lastShot=-1,fired=new Set();
-function setT(t,seek){T=clamp(t,0,TOTAL);if(seek){fired=new Set();try{speechSynthesis.cancel();}catch(e){}markFired();}draw();}
-function markFired(){SHOTS.forEach((s,i)=>{(s.lines||[]).forEach((l,k)=>{if(s.start+l[2]<T)fired.add('l'+i+'_'+k);});(s.sfx||[]).forEach((x,k)=>{if(s.start+x[0]<T)fired.add('s'+i+'_'+k);});});}
-function triggers(){
-  const i=shotAt(T),s=SHOTS[i],tl=T-s.start;
-  (s.lines||[]).forEach((l,k)=>{const id='l'+i+'_'+k;if(!fired.has(id)&&tl>=l[2]){fired.add(id);speak(l[0],l[1],l[4]);}});
-  (s.sfx||[]).forEach((x,k)=>{const id='s'+i+'_'+k;if(!fired.has(id)&&tl>=x[0]){fired.add(id);sfx(x[1]);}});
-}
+// All VO/SFX cues on the global timeline, in time order.
+const EVENTS=[];
+SHOTS.forEach(s=>{(s.lines||[]).forEach(l=>EVENTS.push({t:s.start+l[2],run:()=>speak(l[0],l[1],l[4])}));(s.sfx||[]).forEach(x=>EVENTS.push({t:s.start+x[0],run:()=>sfx(x[1])}));});
+EVENTS.sort((a,b)=>a.t-b.t);
+let T=0,playing=false,lastShot=-1,nextEv=0,origin=0,originT=0;
+function setT(t,seek){T=clamp(t,0,TOTAL);if(seek){try{speechSynthesis.cancel();}catch(e){}silence();nextEv=EVENTS.findIndex(e=>e.t>=T);if(nextEv<0)nextEv=EVENTS.length;origin=performance.now();originT=T;}draw();}
+// Fire every cue crossed since the previous frame, even across shot boundaries.
+function triggers(){while(nextEv<EVENTS.length&&EVENTS[nextEv].t<=T){EVENTS[nextEv++].run();}}
 function draw(){
   const i=renderFrame(T);
   if(RENDER) return;
@@ -683,16 +685,17 @@ function draw(){
   $('scrub').value=Math.round(T/TOTAL*1000);
   if(i!==lastShot){lastShot=i;document.querySelectorAll('#list tr').forEach((r,k)=>r.classList.toggle('cur',k===i));const r=document.querySelectorAll('#list tr')[i];if(r&&playing)r.scrollIntoView({block:'nearest'});}
 }
-function loop(ts){
+function loop(){
   if(!playing) return;
-  const dt=last?(ts-last)/1000:0;last=ts;
-  T+=Math.min(dt,0.1);
+  // Wall-clock transport: picture stays in sync with speech and WebAudio even if frames drop.
+  T=originT+(performance.now()-origin)/1000;
   if(T>=TOTAL){T=TOTAL;pause();}
   triggers();draw();
   requestAnimationFrame(loop);
 }
-function play(){if(T>=TOTAL)setT(0,true);actx()?.resume?.();playing=true;last=0;$('play').textContent='❚❚ Pause';requestAnimationFrame(loop);}
-function pause(){playing=false;$('play').textContent='▶ Play';try{speechSynthesis.cancel();}catch(e){}}
+function play(){if(T>=TOTAL)setT(0,true);actx()?.resume?.();try{speechSynthesis.resume();}catch(e){}origin=performance.now();originT=T;playing=true;$('play').textContent='❚❚ Pause';requestAnimationFrame(loop);}
+// Pause suspends both audio engines so a resumed line or effect continues where it stopped.
+function pause(){playing=false;$('play').textContent='▶ Play';try{speechSynthesis.pause();}catch(e){}ac?.suspend?.();}
 window.renderAt=t=>{renderFrame(t);return true;};
 window.ANIMATIC_TOTAL=TOTAL;
 
@@ -702,11 +705,12 @@ if(!RENDER){
   $('next').onclick=()=>{const i=shotAt(T);setT(SHOTS[Math.min(SHOTS.length-1,i+1)].start,true);};
   $('scrub').oninput=e=>setT(e.target.value/1000*TOTAL,true);
   for(const k of ['vo','sfx','hud','subs']) $(k).onchange=e=>{opts[k]=e.target.checked;if(k==='vo'&&!opts.vo)try{speechSynthesis.cancel();}catch(_){}draw();};
-  document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;if(e.code==='Space'){e.preventDefault();playing?pause():play();}if(e.code==='ArrowRight'){e.preventDefault();$('next').click();}if(e.code==='ArrowLeft'){e.preventDefault();$('prev').click();}});
+  document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INPUT'&&e.target.type!=='range')return;if((e.code==='Space'||e.code==='Enter')&&(tag==='BUTTON'||tag==='TR'))return;if(e.code==='Space'){e.preventDefault();playing?pause():play();}if(e.code==='ArrowRight'){e.preventDefault();$('next').click();}if(e.code==='ArrowLeft'){e.preventDefault();$('prev').click();}});
   $('marks').innerHTML=CHECKPOINTS.map(([n,t])=>`<span style="left:${t/TOTAL*100}%" title="Checkpoint ${n} @ ${fmt(t)}" data-t="${t}">▲${n}</span>`).join('');
   $('marks').onclick=e=>{const t=e.target.dataset.t;if(t)setT(+t,true);};
-  $('list').innerHTML=SHOTS.map((s,i)=>`<tr data-i="${i}"><td class="n"><b>${s.id}</b></td><td class="n">${fmt(s.start)}</td><td class="n">${s.d.toFixed(1)}s</td><td>${(s.lines||[]).map(l=>`<b>${SPEAKER[l[0]]||l[0]}:</b> ${esc(l[1])}`).join('<br>')||'<i>'+esc(s.note||'')+'</i>'}${s.lines&&s.note?`<br><span style="color:var(--muted)">${esc(s.note)}</span>`:''}</td><td class="n">${s.tr||'cut'}</td></tr>`).join('');
+  $('list').innerHTML=SHOTS.map((s,i)=>`<tr data-i="${i}" tabindex="0" aria-label="Jump to shot ${s.id}"><td class="n"><b>${s.id}</b></td><td class="n">${fmt(s.start)}</td><td class="n">${s.d.toFixed(1)}s</td><td>${(s.lines||[]).map(l=>`<b>${SPEAKER[l[0]]||l[0]}:</b> ${esc(l[1])}`).join('<br>')||'<i>'+esc(s.note||'')+'</i>'}${s.lines&&s.note?`<br><span style="color:var(--muted)">${esc(s.note)}</span>`:''}</td><td class="n">${s.tr||'cut'}</td></tr>`).join('');
   $('list').onclick=e=>{const r=e.target.closest('tr');if(r)setT(SHOTS[+r.dataset.i].start+0.001,true);};
+  $('list').onkeydown=e=>{const r=e.target.closest('tr');if(r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopPropagation();setT(SHOTS[+r.dataset.i].start+0.001,true);}};
 }
 draw();
 </script>
