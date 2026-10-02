@@ -30,41 +30,50 @@ const page = pathToFileURL(resolve(root, 'animation/animatic/EP01-rough-animatic
 page.search = hud ? '?render&hud=1' : '?render';
 
 mkdirSync(dirname(out), { recursive: true });
+// Own the whole browser + ffmpeg lifecycle so every failure path closes both.
 const browser = await chromium.launch();
-const tab = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-await tab.goto(page.href);
-await tab.evaluate(() => document.fonts.ready);
-const total = await tab.evaluate(() => window.ANIMATIC_TOTAL);
-const frames = Math.ceil(total * fps);
-
-const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-i', '-',
-  '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-preset', 'medium', '-movflags', '+faststart', out],
-  { stdio: ['pipe', 'inherit', 'inherit'] });
-// Watch ffmpeg from the start so a missing binary or early exit fails fast
-// instead of raising EPIPE or waiting forever on 'drain'.
-let ffFailed = null;
-const ffDone = new Promise((res, rej) => {
-  ff.on('error', (e) => { ffFailed = e; rej(e); });
-  ff.on('close', (c) => {
-    if (c === 0) return res();
-    ffFailed = new Error(`ffmpeg exited ${c}`);
-    rej(ffFailed);
-  });
-});
-ffDone.catch(() => {});
-ff.stdin.on('error', () => {}); // reported through ffDone
-const stage = tab.locator('#stage');
-for (let f = 0; f < frames; f++) {
-  await tab.evaluate((t) => window.renderAt(t), f / fps);
-  const png = await stage.screenshot({ type: 'png' });
-  if (ffFailed) break;
-  if (!ff.stdin.write(png)) await Promise.race([new Promise((r) => ff.stdin.once('drain', r)), ffDone]);
-  if (f % (fps * 30) === 0) console.log(`frame ${f}/${frames}`);
-}
-ff.stdin.end();
+let ff = null;
+let ok = false;
 try {
+  const tab = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  await tab.goto(page.href);
+  await tab.evaluate(() => document.fonts.ready);
+  const total = await tab.evaluate(() => window.ANIMATIC_TOTAL);
+  const frames = Math.ceil(total * fps);
+
+  ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-i', '-',
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-preset', 'medium', '-movflags', '+faststart', out],
+    { stdio: ['pipe', 'inherit', 'inherit'] });
+  // Watch ffmpeg from the start so a missing binary or early exit fails fast
+  // instead of raising EPIPE or waiting forever on 'drain'.
+  let ffFailed = null;
+  const ffDone = new Promise((res, rej) => {
+    ff.on('error', (e) => { ffFailed = e; rej(e); });
+    ff.on('close', (c) => {
+      if (c === 0) return res();
+      ffFailed = ffFailed || new Error(`ffmpeg exited ${c}`);
+      rej(ffFailed);
+    });
+  });
+  ffDone.catch(() => {});
+  ff.stdin.on('error', () => {}); // reported through ffDone
+
+  const stage = tab.locator('#stage');
+  for (let f = 0; f < frames; f++) {
+    if (ffFailed) throw ffFailed;
+    await tab.evaluate((t) => window.renderAt(t), f / fps);
+    const png = await stage.screenshot({ type: 'png' });
+    if (!ff.stdin.write(png)) await Promise.race([new Promise((r) => ff.stdin.once('drain', r)), ffDone]);
+    if (f % (fps * 30) === 0) console.log(`frame ${f}/${frames}`);
+  }
+  ff.stdin.end();
   await ffDone;
+  ok = true;
+  console.log(`wrote ${out} (${total}s @ ${fps}fps)`);
 } finally {
+  if (!ok && ff && ff.exitCode === null) {
+    ff.stdin.destroy();
+    ff.kill('SIGKILL');
+  }
   await browser.close();
 }
-console.log(`wrote ${out} (${total}s @ ${fps}fps)`);
