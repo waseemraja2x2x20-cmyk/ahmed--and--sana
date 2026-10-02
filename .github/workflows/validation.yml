@@ -1,0 +1,150 @@
+name: Repository Validation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-project-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Validate project.json references
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from collections import Counter
+          from pathlib import Path
+
+          root = Path('.').resolve()
+          data = json.loads((root / 'project.json').read_text(encoding='utf-8'))
+          scene_dir_pattern = re.compile(r'^scene-[0-9]{2}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$')
+
+          failures = []
+
+          def resolve_repo_path(path_value, label):
+              if path_value is None:
+                  return None
+
+              resolved = (root / Path(path_value)).resolve()
+              try:
+                  resolved.relative_to(root)
+              except ValueError:
+                  failures.append(f"{label}: path escapes repository root '{path_value}'")
+                  return None
+
+              return resolved
+
+          def check_path(path_value, label, kind='any'):
+              resolved = resolve_repo_path(path_value, label)
+              if resolved is None:
+                  return
+              if kind == 'dir' and not resolved.is_dir():
+                  failures.append(f"{label}: missing directory '{path_value}'")
+              elif kind == 'file' and not resolved.is_file():
+                  failures.append(f"{label}: missing file '{path_value}'")
+              elif kind == 'any' and not resolved.exists():
+                  failures.append(f"{label}: missing path '{path_value}'")
+
+          dir_fields = {
+              'assets.mouths.path': data['assets']['mouths']['path'],
+              'assets.eyes.path': data['assets']['eyes']['path'],
+              'assets.eyebrows.path': data['assets']['eyebrows']['path'],
+              'assets.hands.path': data['assets']['hands']['path'],
+              'scenes.path': data['scenes']['path'],
+              'audio.dialogue_path': data['audio']['dialogue_path'],
+              'audio.music_path': data['audio']['music_path'],
+              'audio.sfx_path': data['audio']['sfx_path'],
+              'scripts.path': data['scripts']['path'],
+              'exports.preview': data['exports']['preview'],
+              'exports.final': data['exports']['final'],
+          }
+
+          for label, value in dir_fields.items():
+              check_path(value, label, kind='dir')
+
+          file_fields = {
+              'characters.ahmed.source.preview': data['characters']['ahmed']['source']['preview'],
+              'characters.sana.source.preview': data['characters']['sana']['source']['preview'],
+              'characters.ahmed.reference': data['characters']['ahmed']['reference'],
+              'characters.sana.reference': data['characters']['sana']['reference'],
+              'characters.ahmed.source.psd': data['characters']['ahmed']['source']['psd'],
+              'characters.ahmed.source.ai': data['characters']['ahmed']['source']['ai'],
+              'characters.sana.source.psd': data['characters']['sana']['source']['psd'],
+              'characters.sana.source.ai': data['characters']['sana']['source']['ai'],
+              'characters.ahmed.puppet.psd': data['characters']['ahmed']['puppet']['psd'],
+              'characters.ahmed.puppet.preview': data['characters']['ahmed']['puppet']['preview'],
+              'characters.sana.puppet.psd': data['characters']['sana']['puppet']['psd'],
+              'characters.sana.puppet.preview': data['characters']['sana']['puppet']['preview'],
+          }
+
+          for label, value in file_fields.items():
+              if value is None:
+                  continue
+              check_path(value, label, kind='file')
+
+          scene_root = data['scenes']['path']
+          scene_list = data['scenes']['current_scenes']
+          duplicate_scenes = sorted(
+              name for name, count in Counter(scene_list).items() if count > 1
+          )
+          if duplicate_scenes:
+              failures.append(
+                  "scenes.current_scenes contains duplicate entries: "
+                  + ", ".join(duplicate_scenes)
+              )
+
+          for scene_name in scene_list:
+              scene_entry = Path(scene_name)
+              if scene_entry.is_absolute() or len(scene_entry.parts) != 1 or scene_name in {'.', '..'}:
+                  failures.append(
+                      f"scenes.current_scenes[{scene_name}]: must be a single directory name"
+                  )
+                  continue
+              if not scene_dir_pattern.match(scene_name):
+                  failures.append(
+                      f"scenes.current_scenes[{scene_name}]: must match scene-NN or scene-NN-suffix format"
+                  )
+                  continue
+              check_path(str(Path(scene_root) / scene_name), f"scenes.current_scenes[{scene_name}]", kind='dir')
+
+          scene_root_dir = resolve_repo_path(scene_root, 'scenes.path')
+          if scene_root_dir is not None and scene_root_dir.is_dir():
+              listed_scenes = set(scene_list)
+              all_scene_dirs = {entry.name for entry in scene_root_dir.iterdir() if entry.is_dir()}
+              invalid_scene_dirs = sorted(
+                  name for name in all_scene_dirs if not scene_dir_pattern.match(name)
+              )
+              if invalid_scene_dirs:
+                  failures.append(
+                      "animation/scenes contains directories with invalid names: "
+                      + ", ".join(invalid_scene_dirs)
+                  )
+
+              actual_scenes = {
+                  name for name in all_scene_dirs if scene_dir_pattern.match(name)
+              }
+
+              missing_from_manifest = sorted(actual_scenes - listed_scenes)
+              if missing_from_manifest:
+                  failures.append(
+                      "animation/scenes contains directories not listed in scenes.current_scenes: "
+                      + ", ".join(missing_from_manifest)
+                  )
+
+          if failures:
+              raise SystemExit("\n".join(failures))
+
+          print('project.json validation passed')
+          PY

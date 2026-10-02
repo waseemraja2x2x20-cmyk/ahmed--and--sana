@@ -130,6 +130,9 @@ The complete production suite for **WANDERLAND EP01 (Pilot)** has been published
 
 **Purpose:** Single source of truth for character specifications, rig requirements, and animation targets.
 
+**Published Gallery:** [`Wanderland Ep 01 - Master Production Asset Gallery`](Wanderland%20Ep%2001%20-%20Master%20Production%20Asset%20Gallery.md)  
+This clean catalog consolidates the approved character references, deduplicated storyboard panels, and the repo path verification table.
+
 **Contents:**
 - Character bios (Ahmed: Smart/Lazy/Big Dreams; Sana: Confident/Caring/Emotionally Smart)
 - Model sheet turnaround specs

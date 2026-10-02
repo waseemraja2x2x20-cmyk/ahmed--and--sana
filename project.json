@@ -48,14 +48,14 @@
       "id": "ahmed",
       "display_name": "Ahmed",
       "source": {
-        "psd": "characters/boy/BOY.psd",
-        "ai": "characters/boy/BOY.ai",
-        "preview": "characters/boy/BOY.png"
+        "psd": null,
+        "ai": null,
+        "preview": "characters/boy/BOY_standing.png"
       },
-      "reference": "references/ahmed-reference.png",
+      "reference": "references/character-sheet.png",
       "puppet": {
-        "psd": "puppets/Ahmed/Ahmed.psd",
-        "preview": "puppets/Ahmed/Ahmed.png"
+        "psd": null,
+        "preview": null
       },
       "role": "male-character"
     },
@@ -63,14 +63,14 @@
       "id": "sana",
       "display_name": "Sana",
       "source": {
-        "psd": "characters/girl/GIRL.psd",
-        "ai": "characters/girl/GIRL.ai",
-        "preview": "characters/girl/GIRL.png"
+        "psd": null,
+        "ai": null,
+        "preview": "characters/girl/GIRL_standing.png"
       },
-      "reference": "references/sana-reference.png",
+      "reference": "references/character-sheet.png",
       "puppet": {
-        "psd": "puppets/Sana/Sana.psd",
-        "preview": "puppets/Sana/Sana.png"
+        "psd": null,
+        "preview": null
       },
       "role": "female-character"
     }
@@ -189,7 +189,8 @@
     "current_scenes": [
       "scene-01",
       "scene-02",
-      "scene-03"
+      "scene-03",
+      "scene-04-rain"
     ]
   },
   "audio": {
