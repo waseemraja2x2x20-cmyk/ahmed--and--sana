@@ -10,9 +10,12 @@ from pathlib import Path
 import bpy
 
 
-CUTS_DIR = Path(bpy.path.abspath("//")) / "WANDERLAND_CARTOON" / "CUTS" / "BOY_PARTS"
-if not CUTS_DIR.exists():
-    CUTS_DIR = Path("/mnt/data/WANDERLAND_CARTOON/CUTS/BOY_PARTS")
+# Cut artwork lives next to the saved .blend by default; set WANDERLAND_BOY_CUTS
+# to point somewhere else. No machine-specific fallback is assumed.
+CUTS_DIR = Path(
+    os.environ.get("WANDERLAND_BOY_CUTS")
+    or Path(bpy.path.abspath("//")) / "WANDERLAND_CARTOON" / "CUTS" / "BOY_PARTS"
+)
 
 
 def ensure_collection(name, parent):
@@ -110,4 +113,8 @@ armature["Expression"] = 0
 
 print("BOY_RIG created.")
 print("Hand_L/Hand_R: 1=Normal, 2=FaceSupport, 3=Point, 4=Fist, 5=HoldObject")
-print(f"Import cut artwork from {CUTS_DIR} as planes and parent it to bones.")
+if CUTS_DIR.is_dir():
+    print(f"Import cut artwork from {CUTS_DIR} as planes and parent it to bones.")
+else:
+    print(f"Cut artwork folder not found: {CUTS_DIR}")
+    print("Create the BOY_PARTS cuts there, or set WANDERLAND_BOY_CUTS to their folder, then import them as planes.")

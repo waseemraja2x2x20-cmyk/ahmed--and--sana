@@ -26,8 +26,10 @@ The supplied sheets are references, not finished production layers.
       `assets/eyes/`, including open, half-closed, and closed states.
 - [ ] Create neutral, angry, surprised, and sad eyebrow states under
       `assets/eyebrows/`.
-- [ ] Create five hand poses per hand under `assets/hands/`: normal,
-      face-support, point, wave, and hold-object.
+- [ ] Create five hand poses per hand under `assets/hands/`, matching the
+      puppet builders: Ahmed uses normal, face-support, point, fist, and
+      hold-object; Sana uses normal, face-support, point, wave, and
+      hold-object.
 - [ ] Keep line weight, colors, proportions, and transparent edges consistent
       with the canonical references.
 

@@ -1,6 +1,13 @@
 // GIRL.psd builder - run in Photoshop with File > Scripts > Browse.
 var doc = app.documents.add(2500, 3500, 72, "GIRL", NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
 
+// ExtendScript is ES3: no Array.prototype.forEach, so iterate with a plain loop.
+function each(items, fn) {
+    for (var i = 0; i < items.length; i++) {
+        fn(items[i]);
+    }
+}
+
 function createGroup(name, parent) {
     var group = parent.layerSets.add();
     group.name = name;
@@ -33,7 +40,7 @@ createGroup("Right Pupil", rightEye);
 createGroup("Right Blink", rightEye);
 
 var mouth = createGroup("+Mouth", head);
-["Neutral", "Ah", "D", "Ee", "F", "L", "M", "Oh", "R", "S", "Uh", "W-Oo"].forEach(function (shape) {
+each(["Neutral", "Ah", "D", "Ee", "F", "L", "M", "Oh", "R", "S", "Uh", "W-Oo"], function (shape) {
     createGroup(shape, mouth);
 });
 
@@ -44,7 +51,7 @@ createGroup("Left Shoulder", leftArm);
 createGroup("Left Upper Arm", leftArm);
 createGroup("Left Lower Arm", leftArm);
 var leftHand = createGroup("+Left Hand", leftArm);
-["Normal", "FaceSupport", "Point", "Wave", "HoldObject"].forEach(function (pose) {
+each(["Normal", "FaceSupport", "Point", "Wave", "HoldObject"], function (pose) {
     createGroup(pose, leftHand);
 });
 
@@ -55,7 +62,7 @@ createGroup("Right Shoulder", rightArm);
 createGroup("Right Upper Arm", rightArm);
 createGroup("Right Lower Arm", rightArm);
 var rightHand = createGroup("+Right Hand", rightArm);
-["Normal", "FaceSupport", "Point", "Wave", "HoldObject"].forEach(function (pose) {
+each(["Normal", "FaceSupport", "Point", "Wave", "HoldObject"], function (pose) {
     createGroup(pose, rightHand);
 });
 

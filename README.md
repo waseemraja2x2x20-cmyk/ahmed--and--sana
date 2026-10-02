@@ -87,3 +87,56 @@ The Blender boy-rig builder is available at
 [`scripts/blender/build-boy-rig.py`](scripts/blender/build-boy-rig.py). Run it
 from Blender's Text Editor, then import cut artwork as planes and parent each
 piece to the corresponding bone.
+
+## EP01 rough animatic
+
+A playable rough animatic of WANDERLAND EP01 is available at
+[`animation/animatic/EP01-rough-animatic.html`](animation/animatic/EP01-rough-animatic.html).
+Open it in a browser to watch all 75 shots (SC01–SC11 plus end card, ~4:58).
+Each story shot is timed to [`docs/EP01-TIMING-SHEET-v1.0.md`](docs/EP01-TIMING-SHEET-v1.0.md)
+(SC01–SC11 end at 04:50.5, as in the sheet). The end card is shortened to 8s
+instead of the sheet's 30s credits placeholder, so the review runtime is 4:58.5
+rather than 5:20.5.
+The characters are vector placeholders of Ahmed and Sana, drawn from the
+updated character turnaround. Ahmed has curly brown hair, a charcoal zip
+hoodie with drawstrings over a white tee, a wristwatch, rolled jeans and
+canvas sneakers. Sana has long brown hair with bangs, a dusty-rose crew-neck
+sweater, high-waisted cream wide-leg trousers, a tan crossbody bag and brown
+loafers. Both have almond eyes with a confident heavy upper lid, so the
+default read is smart and cool. Skin, hair and clothes are shaded, and hands
+have fingers (open, relaxed, fist and point). They are not production art. Movement is spring-driven: poses blend
+instead of snapping, characters breathe, sway and nod while talking, and head
+turns rotate in 3D through edge-on.
+
+The presentation is cinematic. It uses a ~2.2:1 scope letterbox with
+subtitles in the bar, and a multiplane parallax camera that pushes and drifts
+slowly on every shot. Backgrounds get depth of field scaled by shot size.
+Each location has its own colour grade with sun bloom, plus a vignette, film
+grain, motion-blurred whip pans and true cross-dissolves. Name cards, thought
+bubbles, sound-effect words, the scoreboard and the extruded 3D title spring
+in with physics similar to Framer Motion's.
+
+The player includes:
+
+- temp VO through browser speech synthesis, with a different pitch per character
+- synthesized SFX (record scratch, buzzer, clang, crickets, drumroll, cheers)
+- subtitles, a shot HUD, and the SC04–SC06 scoreboard lower-third
+- the protected 2-second silence beat in SC11-10
+- timeline marks for the nine animatic review checkpoints
+- a clickable shot list
+
+The hand-lettered font (Patrick Hand, SIL OFL 1.1) is bundled in
+`animation/animatic/fonts/`, so the player and renders work offline.
+
+To render a silent MP4 with the subtitles and HUD burned in (Playwright and
+ffmpeg required), run:
+
+```sh
+node scripts/animatic/render-ep01.mjs            # exports/previews/EP01-rough-animatic.mp4
+node scripts/animatic/render-ep01.mjs --no-hud   # without the shot HUD
+node scripts/animatic/render-ep01.mjs --jobs 2   # parallel render workers (default: up to 4)
+```
+
+Story timing is the only thing to judge in this animatic. Replace the
+placeholder art with the approved puppets once they pass the checks in
+[`docs/PRODUCTION-READINESS.md`](docs/PRODUCTION-READINESS.md).
