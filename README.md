@@ -118,6 +118,9 @@ The player includes:
 - timeline marks for the nine animatic review checkpoints
 - a clickable shot list
 
+The hand-lettered font (Patrick Hand, SIL OFL 1.1) is bundled in
+`animation/animatic/fonts/`, so the player and renders work offline.
+
 To render a silent MP4 with the subtitles and HUD burned in (Playwright and
 ffmpeg required), run:
 

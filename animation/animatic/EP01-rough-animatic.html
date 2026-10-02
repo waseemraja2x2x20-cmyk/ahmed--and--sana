@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WANDERLAND EP01 Animatic</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
+/* Patrick Hand (SIL OFL 1.1) bundled locally so renders are reproducible offline. */
+@font-face{font-family:'Patrick Hand';src:url('fonts/PatrickHand-Regular.ttf') format('truetype');font-display:block}
 :root{
   --bg:#f6f2ea; --panel:#fffdf8; --ink:#1d1a24; --muted:#6c6573; --line:#e3dccf;
-  --accent:#e2557f; --accent2:#2f4a7a; --hl:#fde9ef;
+  --accent:#b8325c; --accent2:#24406e; --hl:#fde9ef;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -35,8 +35,8 @@ label.tog{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:1
 .time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;margin-left:auto}
 .scrub{position:relative;margin:6px 0 18px}
 .scrub input{width:100%;accent-color:var(--accent)}
-.marks{position:relative;height:16px}
-.marks button{position:absolute;top:0;transform:translateX(-50%);font-size:10px;line-height:1;color:var(--accent2);cursor:pointer;white-space:nowrap;background:none;border:0;padding:2px 3px;border-radius:4px}
+.marks{position:relative;height:20px}
+.marks button{position:absolute;top:0;transform:translateX(-50%);font-size:12px;font-weight:600;line-height:1;color:var(--accent2);cursor:pointer;white-space:nowrap;background:none;border:0;padding:2px 3px;border-radius:4px}
 .marks button:focus-visible{outline:2px solid var(--accent)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:14px}
 .panel h2{font-size:15px;margin:0 0 8px}
@@ -862,7 +862,7 @@ const EVENTS=[];
 SHOTS.forEach(s=>{(s.lines||[]).forEach(l=>EVENTS.push({t:s.start+l[2],run:()=>speak(l[0],l[1],l[4])}));(s.sfx||[]).forEach(x=>EVENTS.push({t:s.start+x[0],run:()=>sfx(x[1])}));});
 EVENTS.sort((a,b)=>a.t-b.t);
 let T=0,playing=false,lastShot=-1,nextEv=0,origin=0,originT=0;
-function setT(t,seek){T=clamp(t,0,TOTAL);if(seek){try{speechSynthesis.cancel();}catch(e){}silence();nextEv=EVENTS.findIndex(e=>e.t>=T);if(nextEv<0)nextEv=EVENTS.length;origin=performance.now();originT=T;}draw();}
+function setT(t,seek){T=clamp(t,0,TOTAL);if(seek){try{speechSynthesis.cancel();}catch(e){}silence();nextEv=EVENTS.findIndex(e=>e.t>=T-0.02);if(nextEv<0)nextEv=EVENTS.length;origin=performance.now();originT=T;}draw();}
 // Fire every cue crossed since the previous frame, even across shot boundaries.
 function triggers(){while(nextEv<EVENTS.length&&EVENTS[nextEv].t<=T){EVENTS[nextEv++].run();}}
 function draw(){

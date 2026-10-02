@@ -23,8 +23,18 @@ const opt = (name, def) => {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : def;
 };
-const fps = Number(opt('--fps', 24));
-const jobs = Math.max(1, Number(opt('--jobs', Math.min(4, availableParallelism()))));
+// Validate numeric options up front, before any browser, ffmpeg or output file is created.
+function intOpt(name, def, min, max) {
+  const raw = opt(name, String(def));
+  const v = Number(raw);
+  if (!Number.isInteger(v) || v < min || v > max) {
+    console.error(`${name} must be an integer from ${min} to ${max} (got ${JSON.stringify(raw)})`);
+    process.exit(2);
+  }
+  return v;
+}
+const fps = intOpt('--fps', 24, 1, 120);
+const jobs = intOpt('--jobs', Math.min(4, availableParallelism()), 1, 32);
 const hud = !args.includes('--no-hud');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const out = resolve(root, opt('--out', 'exports/previews/EP01-rough-animatic.mp4'));
