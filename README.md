@@ -91,10 +91,13 @@ Each story shot is timed to [`docs/EP01-TIMING-SHEET-v1.0.md`](docs/EP01-TIMING-
 instead of the sheet's 30s credits placeholder, so the review runtime is 4:58.5
 rather than 5:20.5.
 The characters are vector placeholders of Ahmed and Sana, drawn from the
-canonical palette and silhouettes. They are not production art. They have
-glossy anime-style eyes, tapered brows, soft heart-shaped faces, shaded skin,
-hair and clothes, and hands with fingers (open, relaxed, fist and point).
-Their feet are profile sneakers. Movement is spring-driven: poses blend
+updated character turnaround. Ahmed has curly brown hair, a charcoal zip
+hoodie with drawstrings over a white tee, a wristwatch, rolled jeans and
+canvas sneakers. Sana has long brown hair with bangs, a dusty-rose crew-neck
+sweater, high-waisted cream wide-leg trousers, a tan crossbody bag and brown
+loafers. Both have almond eyes with a confident heavy upper lid, so the
+default read is smart and cool. Skin, hair and clothes are shaded, and hands
+have fingers (open, relaxed, fist and point). They are not production art. Movement is spring-driven: poses blend
 instead of snapping, characters breathe, sway and nod while talking, and head
 turns rotate in 3D through edge-on.
 
@@ -121,6 +124,7 @@ ffmpeg required), run:
 ```sh
 node scripts/animatic/render-ep01.mjs            # exports/previews/EP01-rough-animatic.mp4
 node scripts/animatic/render-ep01.mjs --no-hud   # without the shot HUD
+node scripts/animatic/render-ep01.mjs --jobs 2   # parallel render workers (default: up to 4)
 ```
 
 Story timing is the only thing to judge in this animatic. Replace the
